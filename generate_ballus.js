@@ -10,8 +10,10 @@ export function generate_ballus(scene){
     const ballusFaceTexture = new THREE.TextureLoader().load(".\\textures\\Ballus_face.png"); //material que vai ser aplicado na geometria
     // const MoonNormal = new THREE.TextureLoader().load(".\\textures\\normal.jpg"); // textura normal para dar a ilusão de profundidade na textura padrão
     
-    ballus_body = new THREE.Mesh(ballusFormat,new THREE.MeshStandardMaterial({map: ballusBodyTexture})); //a junção da forma geometrica com o material
+    ballus_body = new THREE.Mesh(ballusFormat,new THREE.MeshStandardMaterial({map: ballusBodyTexture}),); //a junção da forma geometrica com o material
+    ballus_body.castShadow = true;
     ballus_face = new THREE.Mesh(ballusFaceFormat,new THREE.MeshStandardMaterial({map: ballusFaceTexture, transparent: true })); //a junção da forma geometrica com o material
+    ballus_face.castShadow = true;
     scene.add(ballus_face); //adicionando a forma a cena
     ballus_face.add(ballus_body)
 

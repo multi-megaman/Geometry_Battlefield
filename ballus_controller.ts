@@ -36,6 +36,10 @@ export class BallusController {
         this.run = !this.run;
     }
 
+    public getRun(){
+        return this.run;
+    }
+
     public update (delta : number, keysPressed: any){
         const directionPressed = DIRECTIONS.some(key => keysPressed[key] == true) //qualquer botão de movimento ser pressionado
 
@@ -59,7 +63,7 @@ export class BallusController {
             this.walkDirection.applyAxisAngle(this.rotateAngle, directionOffset)
 
             // run/walk velocity
-            const velocity = this.currentAction == 'Run' ? this.runVelocity : this.walkVelocity
+            const velocity = this.run ? this.runVelocity : this.walkVelocity
 
             // move model & camera
             const moveX = this.walkDirection.x * velocity * delta

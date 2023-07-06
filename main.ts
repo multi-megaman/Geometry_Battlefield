@@ -28,23 +28,56 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 camera.position.setZ(30);
 
 renderer.render(scene,camera);
+renderer.shadowMap.enabled = true;
 
 //rotacionando a câmera via mouse
 const controls = new OrbitControls(camera, renderer.domElement); //recebe como parâmetro a propria câmera e o elemento html do renderer, onde fica escutando atualizações com relação ao mouse
 
 //adicionando luzes
-const pointLight = new THREE.PointLight(0xffffff,2); //criando um ponto de luz na cena
-pointLight.position.set(10,10,10) //movendo o ponto de luz
+const pointLight = new THREE.PointLight(0xffffff,1); //criando um ponto de luz na cena
+pointLight.position.set(100,100,100) //movendo o ponto de luz
 scene.add(pointLight); //adicionando o ponto de luz na cena
-const ambientLight = new THREE.AmbientLight(0xffffff); //criando uma luz ambiente que ilumina tudo na cena
-scene.add(ambientLight) //adicionando a luz ambiente na cena
+pointLight.castShadow = true;
 
-//helpers
-// const lightHelper = new THREE.PointLightHelper(pointLight) //cria um helper que mostra na cena onde se localiza o ponto de luz
-// scene.add(lightHelper)
+const pointLight2 = new THREE.PointLight(0xffffff,1); //criando um ponto de luz na cena
+pointLight2.position.set(-100,100,-100) //movendo o ponto de luz
+scene.add(pointLight2); //adicionando o ponto de luz na cena
+pointLight2.castShadow = true;
+
+const pointLight3 = new THREE.PointLight(0xffffff,1); //criando um ponto de luz na cena
+pointLight3.position.set(-100,100,100) //movendo o ponto de luz
+scene.add(pointLight3); //adicionando o ponto de luz na cena
+pointLight3.castShadow = true;
+
+const pointLight4 = new THREE.PointLight(0xffffff,1); //criando um ponto de luz na cena
+pointLight4.position.set(100,100,-100) //movendo o ponto de luz
+scene.add(pointLight4); //adicionando o ponto de luz na cena
+pointLight4.castShadow = true;
+// helpers
+const lightHelper = new THREE.PointLightHelper(pointLight) //cria um helper que mostra na cena onde se localiza o ponto de luz
+scene.add(lightHelper)
+const lightHelper2 = new THREE.PointLightHelper(pointLight2) //cria um helper que mostra na cena onde se localiza o ponto de luz
+scene.add(lightHelper2)
+const lightHelper3 = new THREE.PointLightHelper(pointLight3) //cria um helper que mostra na cena onde se localiza o ponto de luz
+scene.add(lightHelper3)
+const lightHelper4 = new THREE.PointLightHelper(pointLight4) //cria um helper que mostra na cena onde se localiza o ponto de luz
+scene.add(lightHelper4)
+// const ambientLight = new THREE.AmbientLight(0xffffff); //criando uma luz ambiente que ilumina tudo na cena
+// ambientLight.castShadow = true;
+// scene.add(ambientLight) //adicionando a luz ambiente na cena
+
 // const gridHelper = new THREE.GridHelper(200,50); //cria um plano de auxilio para o dev
 // scene.add(gridHelper); //adiciona o gridhelper a cena
 
+const floorGeometry = new THREE.BoxGeometry(256,4,256);
+const floorTexture = new THREE.TextureLoader().load(".\\textures\\checkered_texture.jpg"); //material que vai ser aplicado na geometria
+const floor = new THREE.Mesh(floorGeometry,new THREE.MeshStandardMaterial({map: floorTexture})); //a junção da forma geometrica com o material
+floor.receiveShadow = true;
+floor.position.setX(0);
+floor.position.setY(-12);
+floor.position.setZ(0);
+
+scene.add(floor)
 
 //função que gera aleatoriamente esferar na cena
 let stars : Object[] = [];
@@ -53,13 +86,33 @@ stars = generate_stars(scene,150);
 //teste de modelo
 var playerController: BallusController;
 const modelLoader = new GLTFLoader();
+var angryFaceMap = new THREE.TextureLoader().load('./models/ballus/Ballus_angry.png');
+angryFaceMap.flipY = false;
+var angryTexture = new THREE.MeshStandardMaterial({map: angryFaceMap});
+var normalFaceMap = new THREE.TextureLoader().load('./models/ballus/Ballus_normal.png');
+normalFaceMap.flipY = false;
+var normalTexture = new THREE.MeshStandardMaterial({map: normalFaceMap});
+var model;
 modelLoader.load('./models/ballus/ballus.gltf', function(gltf){
-  const model = gltf.scene;
-  gltf.scene.scale.set(10,10,10);
+  model = gltf.scene;
+  // faceMap.anisotropy = 16;
+  // faceMap.repeat = new THREE.Vector2(13, 13);
+  // model.material = new THREE.MeshStandardMaterial({map:angryTexture});
+  model.scale.set(10,10,10);
+  model.traverse( (child) => {
+    if (child.isMesh) child.material = angryTexture;
+    if ( child.material ) 
+      {child.material.metalness = 0}
+    if(child.isMesh) {
+        child.castShadow = true
+    }
   scene.add(model);
+    
+              } );
   renderer.render(scene,camera);
   playerController = new BallusController(model, controls,camera,'Idle');
 })
+
 
 
 // const ballus = generate_ballus(scene); //Ballus é o corpo do personagem, e ballus.parent é o rosto dele
@@ -112,6 +165,13 @@ function animate(){
   // mod.rotation.x += 1;
 
   controls.update(); //atualiza a câmera conforme o movimento do mouse
+
+  if (playerController.getRun()){
+    model.traverse( (child) => { if (child.isMesh) child.material = angryTexture; })
+  }
+  else{
+    model.traverse( (child) => { if (child.isMesh) child.material = normalTexture; })
+  }
 
   renderer.render( scene, camera);
 }
