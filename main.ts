@@ -35,12 +35,12 @@ renderer.shadowMap.enabled = true;
 //rotacionando a câmera via mouse
 const controls = new OrbitControls(camera, renderer.domElement); //recebe como parâmetro a propria câmera e o elemento html do renderer, onde fica escutando atualizações com relação ao mouse
 controls.enableRotate = true; // Habilitar rotação
-controls.autoRotate = true; // Habilitar rotação automática
+// controls.autoRotate = true; // Habilitar rotação automática
 controls.enableDamping = true; //habilita o damping, que é a inércia do movimento do mouse
 controls.dampingFactor = 0.05; //quanto maior o dampingfactor, mais lento o damping
-controls.enableZoom = true; //desabilita o zoom
+controls.enableZoom = false; //desabilita o zoom
 controls.maxDistance = 110; //distância máxima que a câmera pode se afastar
-controls.minDistance = 50; //distância mínima que a câmera pode se aproximar
+controls.minDistance = 110; //distância mínima que a câmera pode se aproximar
 //adicionando luzes
 const pointLight = new THREE.PointLight(0xffffff,1); //criando um ponto de luz na cena
 pointLight.position.set(100,100,100) //movendo o ponto de luz
