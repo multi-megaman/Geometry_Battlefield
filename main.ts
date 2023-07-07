@@ -1,12 +1,14 @@
 import './style.css';
 import * as THREE from 'three';
-import {generate_ballus} from './generate_ballus.js';
+import {generate_ballus} from './player/generate_ballus.js';
 import { generate_stars } from './generate_stars';
-import { BallusController } from './ballus_controller';
+import { BallusController } from './player/ballus_controller';
 
 
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader' //carregar os modelos
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls' //controlar a câmera via mouse
+
+import { spaceBackground } from './loaders/loadTextureCube';
 
 function getRandomFloat(min, max, decimals) {
   const str = (Math.random() * (max - min) + min).toFixed(decimals);
@@ -50,24 +52,24 @@ pointLight2.position.set(-100,100,-100) //movendo o ponto de luz
 scene.add(pointLight2); //adicionando o ponto de luz na cena
 pointLight2.castShadow = true;
 
-const pointLight3 = new THREE.PointLight(0xffffff,1); //criando um ponto de luz na cena
-pointLight3.position.set(-100,100,100) //movendo o ponto de luz
-scene.add(pointLight3); //adicionando o ponto de luz na cena
-pointLight3.castShadow = true;
+// const pointLight3 = new THREE.PointLight(0xffffff,1); //criando um ponto de luz na cena
+// pointLight3.position.set(-100,100,100) //movendo o ponto de luz
+// scene.add(pointLight3); //adicionando o ponto de luz na cena
+// pointLight3.castShadow = true;
 
-const pointLight4 = new THREE.PointLight(0xffffff,1); //criando um ponto de luz na cena
-pointLight4.position.set(100,100,-100) //movendo o ponto de luz
-scene.add(pointLight4); //adicionando o ponto de luz na cena
-pointLight4.castShadow = true;
+// const pointLight4 = new THREE.PointLight(0xffffff,1); //criando um ponto de luz na cena
+// pointLight4.position.set(100,100,-100) //movendo o ponto de luz
+// scene.add(pointLight4); //adicionando o ponto de luz na cena
+// pointLight4.castShadow = true;
 // helpers
 const lightHelper = new THREE.PointLightHelper(pointLight) //cria um helper que mostra na cena onde se localiza o ponto de luz
 scene.add(lightHelper)
 const lightHelper2 = new THREE.PointLightHelper(pointLight2) //cria um helper que mostra na cena onde se localiza o ponto de luz
 scene.add(lightHelper2)
-const lightHelper3 = new THREE.PointLightHelper(pointLight3) //cria um helper que mostra na cena onde se localiza o ponto de luz
-scene.add(lightHelper3)
-const lightHelper4 = new THREE.PointLightHelper(pointLight4) //cria um helper que mostra na cena onde se localiza o ponto de luz
-scene.add(lightHelper4)
+// const lightHelper3 = new THREE.PointLightHelper(pointLight3) //cria um helper que mostra na cena onde se localiza o ponto de luz
+// scene.add(lightHelper3)
+// const lightHelper4 = new THREE.PointLightHelper(pointLight4) //cria um helper que mostra na cena onde se localiza o ponto de luz
+// scene.add(lightHelper4)
 // const ambientLight = new THREE.AmbientLight(0xffffff); //criando uma luz ambiente que ilumina tudo na cena
 // ambientLight.castShadow = true;
 // scene.add(ambientLight) //adicionando a luz ambiente na cena
@@ -76,7 +78,7 @@ scene.add(lightHelper4)
 // scene.add(gridHelper); //adiciona o gridhelper a cena
 
 const floorGeometry = new THREE.BoxGeometry(256,4,256);
-const floorTexture = new THREE.TextureLoader().load(".\\textures\\checkered_texture.jpg"); //material que vai ser aplicado na geometria
+const floorTexture = new THREE.TextureLoader().load(".\\textures\\floors\\checkered_texture.jpg"); //material que vai ser aplicado na geometria
 const floor = new THREE.Mesh(floorGeometry,new THREE.MeshStandardMaterial({map: floorTexture})); //a junção da forma geometrica com o material
 floor.receiveShadow = true;
 floor.position.setX(0);
@@ -91,40 +93,20 @@ stars = generate_stars(scene,150);
 
 //teste de modelo
 var playerController: BallusController;
-const modelLoader = new GLTFLoader();
-var angryFaceMap = new THREE.TextureLoader().load('./models/ballus/Ballus_angry.png');
-angryFaceMap.flipY = false;
-var angryTexture = new THREE.MeshStandardMaterial({map: angryFaceMap});
-var normalFaceMap = new THREE.TextureLoader().load('./models/ballus/Ballus_normal.png');
-normalFaceMap.flipY = false;
-var normalTexture = new THREE.MeshStandardMaterial({map: normalFaceMap});
-var model;
-modelLoader.load('./models/ballus/ballus.gltf', function(gltf){
-  model = gltf.scene;
-  // faceMap.anisotropy = 16;
-  // faceMap.repeat = new THREE.Vector2(13, 13);
-  // model.material = new THREE.MeshStandardMaterial({map:angryTexture});
-  model.scale.set(10,10,10);
-  model.traverse( (child) => {
-    if (child.isMesh) child.material = angryTexture;
-    if ( child.material ) 
-      {child.material.metalness = 0}
-    if(child.isMesh) {
-        child.castShadow = true
-    }
-  scene.add(model);
-    
-              } );
-  renderer.render(scene,camera);
-  playerController = new BallusController(model, controls,camera,'Idle');
-})
 
+
+
+
+let ballusModel = await generate_ballus(scene);
+playerController = new BallusController(ballusModel, controls,camera,'Idle');
 
 
 // const ballus = generate_ballus(scene); //Ballus é o corpo do personagem, e ballus.parent é o rosto dele
 //carregar o skybox
-const spaceTexture = new THREE.TextureLoader().load('.\\textures\\space.jpg');
-scene.background = spaceTexture;
+// const spaceTexture = new THREE.TextureLoader().load('.\\textures\\space.jpg');
+
+scene.background = spaceBackground;
+scene.environment = spaceBackground;
 
 //Função que gerencia os controles de movimentação:
 const keysPressed = {};
@@ -148,6 +130,12 @@ function animate(){
   let updaterDelta = clock.getDelta();
   if (playerController){
     playerController.update(updaterDelta,keysPressed)
+    // if (playerController.getRun()){
+    //   model.traverse( (child) => { if (child.isMesh) child.material = angryTexture; })
+    // }
+    // else{
+    //   model.traverse( (child) => { if (child.isMesh) child.material = normalTexture; })
+    // }
   }
 
   //Como a cena vai ser atualizada estará escrito tudo aqui dentro
@@ -172,12 +160,6 @@ function animate(){
 
   controls.update(); //atualiza a câmera conforme o movimento do mouse
 
-  if (playerController.getRun()){
-    model.traverse( (child) => { if (child.isMesh) child.material = angryTexture; })
-  }
-  else{
-    model.traverse( (child) => { if (child.isMesh) child.material = normalTexture; })
-  }
 
   renderer.render( scene, camera);
 }

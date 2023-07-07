@@ -1,151 +1,148 @@
 {
-	"accessors": [
-		{
-			"bufferView": 0,
-			"byteOffset": 0,
-			"componentType": 5126,
-			"count": 559,
-			"max": [
-				0.9999997019767761,
-				1.0,
-				0.9999993443489075
-			],
-			"min": [
-				-0.9999990463256836,
-				-1.0,
-				-1.0
-			],
-			"type": "VEC3"
-		},
-		{
-			"bufferView": 1,
-			"byteOffset": 0,
-			"componentType": 5126,
-			"count": 559,
-			"type": "VEC2"
-		},
-		{
-			"bufferView": 2,
-			"byteOffset": 0,
-			"componentType": 5126,
-			"count": 559,
-			"type": "VEC3"
-		},
-		{
-			"bufferView": 3,
-			"byteOffset": 0,
-			"componentType": 5123,
-			"count": 2880,
-			"type": "SCALAR"
-		}
-	],
-	"asset": {
-		"extras": {
-			"created": "Tue Jun 27 21:41:20 2023"
-		},
-		"generator": "Gestaltor 2023.1.0 Titan Community",
-		"version": "2.0"
+	"asset":{
+		"generator":"Khronos glTF Blender I/O v3.5.30",
+		"version":"2.0"
 	},
-	"bufferViews": [
+	"scene":0,
+	"scenes":[
 		{
-			"buffer": 0,
-			"byteLength": 6708,
-			"byteOffset": 0,
-			"target": 34962
-		},
-		{
-			"buffer": 0,
-			"byteLength": 4472,
-			"byteOffset": 6708,
-			"target": 34962
-		},
-		{
-			"buffer": 0,
-			"byteLength": 6708,
-			"byteOffset": 11180,
-			"target": 34962
-		},
-		{
-			"buffer": 0,
-			"byteLength": 5760,
-			"byteOffset": 17888,
-			"target": 34963
-		}
-	],
-	"buffers": [
-		{
-			"byteLength": 23648,
-			"uri": "ballus.bin"
-		}
-	],
-	"images": [
-		{
-			"mimeType": "image/png",
-			"name": "Ballus_backup",
-			"uri": "Ballus_backup.png"
-		}
-	],
-	"materials": [
-		{
-			"doubleSided": true,
-			"name": "Materiais",
-			"pbrMetallicRoughness": {
-				"baseColorTexture": {
-					"index": 0
-				},
-				"metallicFactor": 0.0,
-				"roughnessFactor": 0.5
-			}
-		}
-	],
-	"meshes": [
-		{
-			"name": "Esfera UV",
-			"primitives": [
-				{
-					"attributes": {
-						"NORMAL": 2,
-						"POSITION": 0,
-						"TEXCOORD_0": 1
-					},
-					"indices": 3,
-					"material": 0,
-					"mode": 4
-				}
-			]
-		}
-	],
-	"nodes": [
-		{
-			"mesh": 0,
-			"name": "Esfera UV",
-			"rotation": [
-				0.0,
-				0.7071067811865475,
-				0.0,
-				0.7071067811865475
-			]
-		}
-	],
-	"samplers": [
-		{
-			"magFilter": 9729,
-			"minFilter": 9987
-		}
-	],
-	"scene": 0,
-	"scenes": [
-		{
-			"name": "Scene",
-			"nodes": [
+			"name":"Scene",
+			"nodes":[
 				0
 			]
 		}
 	],
-	"textures": [
+	"nodes":[
 		{
-			"sampler": 0,
-			"source": 0
+			"mesh":0,
+			"name":"Esfera UV",
+			"rotation":[
+				0,
+				0.7071068286895752,
+				0,
+				0.7071067094802856
+			],
+			"scale":[
+				10.000000953674316,
+				10,
+				10.000000953674316
+			]
+		}
+	],
+	"materials":[
+		{
+			"doubleSided":true,
+			"name":"Materiais",
+			"pbrMetallicRoughness":{
+				"baseColorTexture":{
+					"index":0
+				},
+				"metallicFactor":0,
+				"roughnessFactor":0.5
+			}
+		}
+	],
+	"meshes":[
+		{
+			"name":"Esfera UV",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":0,
+						"TEXCOORD_0":1,
+						"NORMAL":2
+					},
+					"indices":3,
+					"material":0
+				}
+			]
+		}
+	],
+	"textures":[
+		{
+			"sampler":0,
+			"source":0
+		}
+	],
+	"images":[
+		{
+			"mimeType":"image/png",
+			"name":"Ballus_backup",
+			"uri":"Ballus_backup.png"
+		}
+	],
+	"accessors":[
+		{
+			"bufferView":0,
+			"componentType":5126,
+			"count":559,
+			"max":[
+				0.9999997019767761,
+				1,
+				0.9999993443489075
+			],
+			"min":[
+				-0.9999990463256836,
+				-1,
+				-1
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":1,
+			"componentType":5126,
+			"count":559,
+			"type":"VEC2"
+		},
+		{
+			"bufferView":2,
+			"componentType":5126,
+			"count":559,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":3,
+			"componentType":5123,
+			"count":2880,
+			"type":"SCALAR"
+		}
+	],
+	"bufferViews":[
+		{
+			"buffer":0,
+			"byteLength":6708,
+			"byteOffset":0,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":4472,
+			"byteOffset":6708,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":6708,
+			"byteOffset":11180,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":5760,
+			"byteOffset":17888,
+			"target":34963
+		}
+	],
+	"samplers":[
+		{
+			"magFilter":9729,
+			"minFilter":9987
+		}
+	],
+	"buffers":[
+		{
+			"byteLength":23648,
+			"uri":"ballus.bin"
 		}
 	]
 }
