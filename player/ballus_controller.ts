@@ -60,7 +60,8 @@ export class BallusController {
                 this.rotateQuarternion.setFromAxisAngle(this.rotateAngle, angleYCameraDirection + directionOffset);
                 this.model.quaternion.rotateTowards(this.rotateQuarternion, 0.2); //estamos rotacionando o Ballus
                 this.model.rotateX(-roll) //efeito de rolar para frente
-                // calculate direction
+
+                // Calculando a direção do movimento
                 this.camera.getWorldDirection(this.walkDirection)
                 this.walkDirection.y = 0
                 this.walkDirection.normalize()
@@ -92,13 +93,13 @@ export class BallusController {
     }
 
     private updateCameraTarget(moveX: number, moveZ: number) { //faz o update da câmera baseado no movimento do personagem
-        // move camera
+        // move a câmera
         this.camera.position.x += moveX
         this.camera.position.z += moveZ
 
-        // update camera target
+        // atualiza o alvo da câmera, ou seja, para quem a câmera está olhando
         this.cameraTarget.x = this.model.position.x
-        this.cameraTarget.y = this.model.position.y + 1
+        this.cameraTarget.y = this.model.position.y + 20
         this.cameraTarget.z = this.model.position.z
         this.orbitControls.target = this.cameraTarget
     }

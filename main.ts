@@ -37,6 +37,7 @@ const controls = new OrbitControls(camera, renderer.domElement); //recebe como p
 controls.enableRotate = true; // Habilitar rotação
 // controls.autoRotate = true; // Habilitar rotação automática
 controls.enableDamping = true; //habilita o damping, que é a inércia do movimento do mouse
+controls.enablePan = false; //desabilita o pan
 controls.dampingFactor = 0.05; //quanto maior o dampingfactor, mais lento o damping
 controls.enableZoom = false; //desabilita o zoom
 controls.maxDistance = 110; //distância máxima que a câmera pode se afastar
@@ -82,7 +83,7 @@ const floorTexture = new THREE.TextureLoader().load(".\\textures\\floors\\checke
 const floor = new THREE.Mesh(floorGeometry,new THREE.MeshStandardMaterial({map: floorTexture})); //a junção da forma geometrica com o material
 floor.receiveShadow = true;
 floor.position.setX(0);
-floor.position.setY(-12);
+floor.position.setY(-30); //antes> -12
 floor.position.setZ(0);
 
 scene.add(floor)
