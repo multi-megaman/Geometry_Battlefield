@@ -1,14 +1,13 @@
 import './style.css';
-import * as THREE from 'three';
+  import * as THREE from 'three';
 import {generate_ballus} from './player/generate_ballus.js';
 import { generate_stars } from './generate_stars';
 import { BallusController } from './player/ballus_controller';
 
 
-import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader' //carregar os modelos
-import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls' //controlar a câmera via mouse
-
 import { spaceBackground } from './loaders/loadTextureCube';
+import { CameraController } from './loaders/load_camera';
+import { generate_PointLight,generate_AmbientLight,generate_SpotLight } from './loaders/light_loader';
 
 function getRandomFloat(min, max, decimals) {
   const str = (Math.random() * (max - min) + min).toFixed(decimals);
@@ -19,61 +18,20 @@ function getRandomFloat(min, max, decimals) {
 //sempre é necessário 3 passos para criar um render: a cena, a camera e o renderizador 
 const scene = new THREE.Scene(); //cria uma cena vazia
 
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000); //cria uma câmera nova na cena
-
 const renderer = new THREE.WebGLRenderer({ //cria um renderizador que vai renderizar a cena a cada chamada nova.
   canvas: document.querySelector('#bg')
 });
-
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
-camera.position.setZ(30);
 
-renderer.render(scene,camera);
-renderer.shadowMap.enabled = true;
+var camera = new CameraController(75, window.innerWidth / window.innerHeight, 0.1, 1000, renderer); //cria uma câmera nova na cena
 
-//rotacionando a câmera via mouse
-const controls = new OrbitControls(camera, renderer.domElement); //recebe como parâmetro a propria câmera e o elemento html do renderer, onde fica escutando atualizações com relação ao mouse
-controls.enableRotate = true; // Habilitar rotação
-// controls.autoRotate = true; // Habilitar rotação automática
-controls.enableDamping = true; //habilita o damping, que é a inércia do movimento do mouse
-controls.enablePan = false; //desabilita o pan
-controls.dampingFactor = 0.05; //quanto maior o dampingfactor, mais lento o damping
-controls.enableZoom = false; //desabilita o zoom
-controls.maxDistance = 110; //distância máxima que a câmera pode se afastar
-controls.minDistance = 110; //distância mínima que a câmera pode se aproximar
+renderer.render(scene,camera.camera);
+renderer.shadowMap.enabled = true; //habilita o mapeamento de sombras
+
 //adicionando luzes
-const pointLight = new THREE.PointLight(0xffffff,1); //criando um ponto de luz na cena
-pointLight.position.set(100,100,100) //movendo o ponto de luz
-scene.add(pointLight); //adicionando o ponto de luz na cena
-pointLight.castShadow = true;
-
-const pointLight2 = new THREE.PointLight(0xffffff,1); //criando um ponto de luz na cena
-pointLight2.position.set(-100,100,-100) //movendo o ponto de luz
-scene.add(pointLight2); //adicionando o ponto de luz na cena
-pointLight2.castShadow = true;
-
-// const pointLight3 = new THREE.PointLight(0xffffff,1); //criando um ponto de luz na cena
-// pointLight3.position.set(-100,100,100) //movendo o ponto de luz
-// scene.add(pointLight3); //adicionando o ponto de luz na cena
-// pointLight3.castShadow = true;
-
-// const pointLight4 = new THREE.PointLight(0xffffff,1); //criando um ponto de luz na cena
-// pointLight4.position.set(100,100,-100) //movendo o ponto de luz
-// scene.add(pointLight4); //adicionando o ponto de luz na cena
-// pointLight4.castShadow = true;
-// helpers
-const lightHelper = new THREE.PointLightHelper(pointLight) //cria um helper que mostra na cena onde se localiza o ponto de luz
-scene.add(lightHelper)
-const lightHelper2 = new THREE.PointLightHelper(pointLight2) //cria um helper que mostra na cena onde se localiza o ponto de luz
-scene.add(lightHelper2)
-// const lightHelper3 = new THREE.PointLightHelper(pointLight3) //cria um helper que mostra na cena onde se localiza o ponto de luz
-// scene.add(lightHelper3)
-// const lightHelper4 = new THREE.PointLightHelper(pointLight4) //cria um helper que mostra na cena onde se localiza o ponto de luz
-// scene.add(lightHelper4)
-// const ambientLight = new THREE.AmbientLight(0xffffff); //criando uma luz ambiente que ilumina tudo na cena
-// ambientLight.castShadow = true;
-// scene.add(ambientLight) //adicionando a luz ambiente na cena
+generate_PointLight(scene,0xffffff,new THREE.Vector3(100,100,100),1,true);
+generate_PointLight(scene,0xffffff,new THREE.Vector3(-100,100,-100),1,true);
 
 // const gridHelper = new THREE.GridHelper(200,50); //cria um plano de auxilio para o dev
 // scene.add(gridHelper); //adiciona o gridhelper a cena
@@ -92,14 +50,9 @@ scene.add(floor)
 let stars : Object[] = [];
 stars = generate_stars(scene,150);
 
-//teste de modelo
-var playerController: BallusController;
-
-
-
-
+//Gerando o personagem principal e seu controlador de movimento e animação 
 let ballusModel = await generate_ballus(scene);
-playerController = new BallusController(ballusModel, controls,camera,'Idle');
+let playerController = new BallusController(ballusModel, camera.cameraControls,camera.camera,'Idle');
 
 
 // const ballus = generate_ballus(scene); //Ballus é o corpo do personagem, e ballus.parent é o rosto dele
@@ -159,10 +112,10 @@ function animate(){
   }
   // mod.rotation.x += 1;
 
-  controls.update(); //atualiza a câmera conforme o movimento do mouse
+  camera.cameraControls.update(); //atualiza a câmera conforme o movimento do mouse
 
 
-  renderer.render( scene, camera);
+  renderer.render( scene, camera.camera);
 }
 
 animate();
