@@ -26,6 +26,7 @@ export var superTexture = new THREE.MeshStandardMaterial({map: superFaceMap,
                                                           roughnessMap: superRoughnessMap, 
                                                           normalMap: superNormalMap,
                                                           envMap: spaceBackground,
+                                                          envMapIntensity: 50,
                                                           exposure: 0});
 
 // var superFaceMap = new THREE.TextureLoader().load('../textures/ballus/super/Ballus_super.png');

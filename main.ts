@@ -41,7 +41,7 @@ const floorTexture = new THREE.TextureLoader().load(".\\textures\\floors\\checke
 const floor = new THREE.Mesh(floorGeometry,new THREE.MeshStandardMaterial({map: floorTexture})); //a junção da forma geometrica com o material
 floor.receiveShadow = true;
 floor.position.setX(0);
-floor.position.setY(-30); //antes> -12
+floor.position.setY(-12); //antes> -30
 floor.position.setZ(0);
 
 scene.add(floor)
