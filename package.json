@@ -12,6 +12,8 @@
     "vite": "^4.3.9"
   },
   "dependencies": {
+    "@dimforge/rapier3d": "^0.11.2",
+    "@types/three": "^0.153.0",
     "rapier": "^1.0.5",
     "three": "^0.153.0"
   }

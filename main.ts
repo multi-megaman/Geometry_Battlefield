@@ -1,13 +1,14 @@
 import './style.css';
   import * as THREE from 'three';
+import { RigidBody, World } from '@dimforge/rapier3d';
 import {generate_ballus} from './player/generate_ballus.js';
 import { generate_stars } from './generate_stars';
 import { BallusController } from './player/ballus_controller';
 
-
 import { spaceBackground } from './loaders/loadTextureCube';
 import { CameraController } from './loaders/load_camera';
 import { generate_PointLight,generate_AmbientLight,generate_SpotLight } from './loaders/light_loader';
+import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 
 function getRandomFloat(min, max, decimals) {
   const str = (Math.random() * (max - min) + min).toFixed(decimals);
@@ -16,18 +17,32 @@ function getRandomFloat(min, max, decimals) {
 }
 
 //sempre é necessário 3 passos para criar um render: a cena, a camera e o renderizador 
+
+//Cena
 const scene = new THREE.Scene(); //cria uma cena vazia
 
+//Renderizador
 const renderer = new THREE.WebGLRenderer({ //cria um renderizador que vai renderizar a cena a cada chamada nova.
-  canvas: document.querySelector('#bg')
+  canvas: document.querySelector('#bg') as HTMLCanvasElement
 });
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 
+
+//Camera
 var camera = new CameraController(75, window.innerWidth / window.innerHeight, 0.1, 1000, renderer); //cria uma câmera nova na cena
+
 
 renderer.render(scene,camera.camera);
 renderer.shadowMap.enabled = true; //habilita o mapeamento de sombras
+
+//Ajustar o tamanho da janela ao tamanho da tela do usuário
+function onWindowResize() {
+  camera.camera.aspect = window.innerWidth / window.innerHeight;
+  camera.camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+window.addEventListener('resize', onWindowResize);
 
 //adicionando luzes
 generate_PointLight(scene,0xffffff,new THREE.Vector3(100,100,100),1,true);
@@ -36,19 +51,21 @@ generate_PointLight(scene,0xffffff,new THREE.Vector3(-100,100,-100),1,true);
 // const gridHelper = new THREE.GridHelper(200,50); //cria um plano de auxilio para o dev
 // scene.add(gridHelper); //adiciona o gridhelper a cena
 
+
+//gerando o Solo
 const floorGeometry = new THREE.BoxGeometry(256,4,256);
 const floorTexture = new THREE.TextureLoader().load(".\\textures\\floors\\checkered_texture.jpg"); //material que vai ser aplicado na geometria
 const floor = new THREE.Mesh(floorGeometry,new THREE.MeshStandardMaterial({map: floorTexture})); //a junção da forma geometrica com o material
 floor.receiveShadow = true;
 floor.position.setX(0);
-floor.position.setY(-12); //antes> -30
+floor.position.setY(-30); //antes> -12
 floor.position.setZ(0);
 
 scene.add(floor)
 
 //função que gera aleatoriamente esferar na cena
-let stars : Object[] = [];
-stars = generate_stars(scene,150);
+let stars : GLTF[] = [];
+// stars = generate_stars(scene,150);
 
 //Gerando o personagem principal e seu controlador de movimento e animação 
 let ballusModel = await generate_ballus(scene);
@@ -78,6 +95,7 @@ document.addEventListener('keyup', (event) => {
 
 //função que será responsável por renderizar cada atualização da cena
 const clock = new THREE.Clock();
+
 function animate(){ 
   requestAnimationFrame(animate);
 
@@ -101,15 +119,15 @@ function animate(){
   // }
 
 
-  if (stars){
-    let i = 0;
-    while (i < stars.length) {
-      stars[i].scene.rotateZ(getRandomFloat(0.01,0.08,4));
-      stars[i].scene.rotateY(getRandomFloat(0.01,0.08,4));
-      stars[i].scene.rotateX(getRandomFloat(0.01,0.08,4));
-      i++;
-  }
-  }
+  // if (stars){
+  //   let i = 0;
+  //   while (i < stars.length) {
+  //     stars[i].scene.rotateZ(getRandomFloat(0.01,0.08,4));
+  //     stars[i].scene.rotateY(getRandomFloat(0.01,0.08,4));
+  //     stars[i].scene.rotateX(getRandomFloat(0.01,0.08,4));
+  //     i++;
+  // }
+  // }
   // mod.rotation.x += 1;
 
   camera.cameraControls.update(); //atualiza a câmera conforme o movimento do mouse
