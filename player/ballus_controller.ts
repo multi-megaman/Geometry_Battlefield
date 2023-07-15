@@ -10,6 +10,7 @@ export class BallusController {
     camera : THREE.Camera;
 
     run: boolean = false;
+    super: boolean = false;
     currentAction: string;
     
     //Temporary data
@@ -20,8 +21,14 @@ export class BallusController {
     cameraTarget = new THREE.Vector3();
 
     //Constants
-    runVelocity = 120;
-    walkVelocity = 60;
+    normalRunVelocity = 120;
+    normalWalkVelocity = 60;
+    superRunVelocity = 480;
+    superWalkVelocity = 240;
+    runVelocity = this.normalRunVelocity;
+    walkVelocity = this.normalWalkVelocity;
+    
+    superRoll = 1;
     fastRoll = 0.5;
     slowRoll = 0.3;
 
@@ -37,6 +44,10 @@ export class BallusController {
         this.run = !this.run;
     }
 
+    public toggleSuper() {
+        this.super = !this.super;
+    }
+
     public getRun(){
         return this.run;
     }
@@ -47,7 +58,8 @@ export class BallusController {
         if (directionPressed){ //se move para frente
             // velocidade de rolamento e de corrida
             const velocity = this.run ? this.runVelocity : this.walkVelocity
-            const roll = this.run ? this.fastRoll : this.slowRoll
+            var roll = this.run ? this.fastRoll : this.slowRoll
+            roll = this.super ? this.superRoll : roll
             //calcula o angulo da câmera 
             var angleYCameraDirection = Math.atan2(
                 (this.camera.position.x - this.model.position.x),
@@ -88,7 +100,18 @@ export class BallusController {
 
         //change to Super Ballus
         if (keysPressed[ACTION] == true){
+            this.toggleSuper()
+        }
+
+        //if super
+        if (this.super){
             this.changeTexture(superTexture)
+            this.runVelocity = this.superRunVelocity;
+            this.walkVelocity = this.superWalkVelocity;
+        }
+        else{
+            this.runVelocity = this.normalRunVelocity;
+            this.walkVelocity = this.normalWalkVelocity;
         }
     }
 

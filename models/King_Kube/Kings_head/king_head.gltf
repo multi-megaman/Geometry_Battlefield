@@ -1,0 +1,158 @@
+{
+	"accessors": [
+		{
+			"bufferView": 0,
+			"byteOffset": 0,
+			"componentType": 5126,
+			"count": 24,
+			"max": [
+				10.0,
+				10.0,
+				10.0
+			],
+			"min": [
+				-10.0,
+				-10.0,
+				-10.0
+			],
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 0,
+			"componentType": 5126,
+			"count": 24,
+			"type": "VEC2"
+		},
+		{
+			"bufferView": 2,
+			"byteOffset": 0,
+			"componentType": 5126,
+			"count": 24,
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 3,
+			"byteOffset": 0,
+			"componentType": 5123,
+			"count": 36,
+			"type": "SCALAR"
+		}
+	],
+	"asset": {
+		"extras": {
+			"created": "Fri Jul 14 14:23:18 2023"
+		},
+		"generator": "Gestaltor 2023.1.0 Titan Community",
+		"version": "2.0"
+	},
+	"bufferViews": [
+		{
+			"buffer": 0,
+			"byteLength": 288,
+			"byteOffset": 0
+		},
+		{
+			"buffer": 0,
+			"byteLength": 192,
+			"byteOffset": 288,
+			"target": 34962
+		},
+		{
+			"buffer": 0,
+			"byteLength": 288,
+			"byteOffset": 480
+		},
+		{
+			"buffer": 0,
+			"byteLength": 72,
+			"byteOffset": 768,
+			"target": 34963
+		}
+	],
+	"buffers": [
+		{
+			"byteLength": 840,
+			"uri": "king_head.bin"
+		}
+	],
+	"extensionsUsed": [
+		"KHR_materials_ior",
+		"KHR_materials_specular"
+	],
+	"images": [
+		{
+			"mimeType": "image/png",
+			"name": "King_Kube_face",
+			"uri": "King_Kube_face.png"
+		}
+	],
+	"materials": [
+		{
+			"doubleSided": true,
+			"extensions": {
+				"KHR_materials_ior": {
+					"ior": 1.4500000476837158
+				},
+				"KHR_materials_specular": {
+					"specularColorFactor": [
+						1.7116891054300531,
+						1.7116891054300531,
+						1.7116891054300531
+					]
+				}
+			},
+			"name": "King_Kube_face",
+			"pbrMetallicRoughness": {
+				"baseColorTexture": {
+					"index": 0
+				},
+				"roughnessFactor": 0.09090909361839294
+			}
+		}
+	],
+	"meshes": [
+		{
+			"name": "Cubo",
+			"primitives": [
+				{
+					"attributes": {
+						"NORMAL": 2,
+						"POSITION": 0,
+						"TEXCOORD_0": 1
+					},
+					"indices": 3,
+					"material": 0,
+					"mode": 4
+				}
+			]
+		}
+	],
+	"nodes": [
+		{
+			"mesh": 0,
+			"name": "Cubo"
+		}
+	],
+	"samplers": [
+		{
+			"magFilter": 9729,
+			"minFilter": 9987
+		}
+	],
+	"scene": 0,
+	"scenes": [
+		{
+			"name": "Scene",
+			"nodes": [
+				0
+			]
+		}
+	],
+	"textures": [
+		{
+			"sampler": 0,
+			"source": 0
+		}
+	]
+}

@@ -14,7 +14,7 @@ function addStar(stars_list, scene) {
     // const star = new THREE.Mesh(geometry,material); // juntando a geometria com o material
     const modelLoaderStar = new GLTFLoader();
     modelLoaderStar.load('./models/star/scene.gltf', function(gltf){
-      const [x,y,z] = Array(3).fill().map( () => THREE.MathUtils.randFloatSpread(200) ); //vai criar um numero aleatório entre -100 e 100 e preencher o array com esses numeros
+      const [x,y,z] = Array(3).fill().map( () => THREE.MathUtils.randFloatSpread(600) ); //vai criar um numero aleatório entre -100 e 100 e preencher o array com esses numeros
       gltf.scene.position.set(x,y,z); //setando a posição da esfera
       
       const randScale = getRandomFloat(2,10,0);

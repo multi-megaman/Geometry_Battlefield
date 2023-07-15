@@ -4,6 +4,7 @@ export async function generate_ballus(scene){
     const modelLoader =new GLTFLoader();
     var model;
     model = await modelLoader.loadAsync('./models/ballus/ballus.gltf');
+    // model = await modelLoader.loadAsync('./models/pelotitus/male/pelotitus_male.gltf')
     model = model.scene;
     // model.scale.set(10,10,10);
     model.traverse( (child) => {

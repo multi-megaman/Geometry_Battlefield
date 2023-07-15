@@ -1,14 +1,20 @@
 import './style.css';
-  import * as THREE from 'three';
+import * as THREE from 'three';
+import { generate_stars } from './generate_stars';
+import { generate_pelotitus} from './generate_pelotitus';
+   
 import { RigidBody, World } from '@dimforge/rapier3d';
 import {generate_ballus} from './player/generate_ballus.js';
-import { generate_stars } from './generate_stars';
 import { BallusController } from './player/ballus_controller';
+import { CameraController } from './loaders/load_camera';
+
+import {King_Kube} from './Enemies/King_Kube/king_kube_kontroller';
+import { load_king_kube } from './Enemies/King_Kube/king_kube_loader';
 
 import { spaceBackground } from './loaders/loadTextureCube';
-import { CameraController } from './loaders/load_camera';
 import { generate_PointLight,generate_AmbientLight,generate_SpotLight } from './loaders/light_loader';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 function getRandomFloat(min, max, decimals) {
   const str = (Math.random() * (max - min) + min).toFixed(decimals);
@@ -45,36 +51,58 @@ function onWindowResize() {
 window.addEventListener('resize', onWindowResize);
 
 //adicionando luzes
-generate_PointLight(scene,0xffffff,new THREE.Vector3(100,100,100),1,true);
-generate_PointLight(scene,0xffffff,new THREE.Vector3(-100,100,-100),1,true);
+// generate_PointLight(scene,0xffffff,new THREE.Vector3(100,200,100),1,true);
+generate_PointLight(scene,0xffffff,new THREE.Vector3(0,200,0),1,true);
+generate_PointLight(scene,0xffffff,new THREE.Vector3(-100,200,800),1,true);
+generate_PointLight(scene,0xffffff,new THREE.Vector3(100,200,800),1,true);
+// generate_AmbientLight(scene,0xffffff,new THREE.Vector3(0,100,800),1);
 
 // const gridHelper = new THREE.GridHelper(200,50); //cria um plano de auxilio para o dev
 // scene.add(gridHelper); //adiciona o gridhelper a cena
 
 
 //gerando o Solo
-const floorGeometry = new THREE.BoxGeometry(256,4,256);
-const floorTexture = new THREE.TextureLoader().load(".\\textures\\floors\\checkered_texture.jpg"); //material que vai ser aplicado na geometria
-const floor = new THREE.Mesh(floorGeometry,new THREE.MeshStandardMaterial({map: floorTexture})); //a junção da forma geometrica com o material
-floor.receiveShadow = true;
-floor.position.setX(0);
-floor.position.setY(-30); //antes> -12
-floor.position.setZ(0);
+// const floorGeometry = new THREE.BoxGeometry(128,4,128);
+// const floorTexture = new THREE.TextureLoader().load(".\\textures\\floors\\checkered_texture.jpg"); //material que vai ser aplicado na geometria
+// const floor = new THREE.Mesh(floorGeometry,new THREE.MeshStandardMaterial({map: floorTexture})); //a junção da forma geometrica com o material
+// floor.receiveShadow = true;
+// floor.position.setX(0);
+// floor.position.setY(-12); //antes> -30
+// floor.position.setZ(0);
 
-scene.add(floor)
+// scene.add(floor)
+
+new GLTFLoader().load('models/Stage1/stage1.gltf', function (gltf) {
+  const model = gltf.scene;
+  model.position.setY(-10);
+  model.traverse(function (object: any) {
+      if (object.isMesh) {
+        // object.castShadow = true;
+        object.receiveShadow = true;
+      }
+  });
+  scene.add(model);
+});
 
 //função que gera aleatoriamente esferar na cena
-let stars : GLTF[] = [];
+// let stars : GLTF[] = [];
 // stars = generate_stars(scene,150);
+
+let male_pelotitus : GLTF[] = [];
+male_pelotitus = generate_pelotitus(scene,6,'./models/pelotitus/male/pelotitus_male.gltf');
+
+let female_pelotitus : GLTF[] = [];
+female_pelotitus = generate_pelotitus(scene,6,'./models/pelotitus/female/pelotitus_female.gltf')
 
 //Gerando o personagem principal e seu controlador de movimento e animação 
 let ballusModel = await generate_ballus(scene);
 let playerController = new BallusController(ballusModel, camera.cameraControls,camera.camera,'Idle');
 
-
-// const ballus = generate_ballus(scene); //Ballus é o corpo do personagem, e ballus.parent é o rosto dele
-//carregar o skybox
-// const spaceTexture = new THREE.TextureLoader().load('.\\textures\\space.jpg');
+//Gerando o King Kube
+let king_kube_model = await load_king_kube(scene);
+let king_kube = new King_Kube(king_kube_model);
+king_kube.model.position.setY(250);
+king_kube.model.position.setZ(-350);
 
 scene.background = spaceBackground;
 scene.environment = spaceBackground;
@@ -102,6 +130,7 @@ function animate(){
   let updaterDelta = clock.getDelta();
   if (playerController){
     playerController.update(updaterDelta,keysPressed)
+    king_kube.update(updaterDelta, playerController.model);
     // if (playerController.getRun()){
     //   model.traverse( (child) => { if (child.isMesh) child.material = angryTexture; })
     // }
