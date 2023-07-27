@@ -1,5 +1,6 @@
 import './style.css';
 import * as THREE from 'three';
+import * as CANNON from 'cannon-es';
 import { generate_stars } from './generate_stars';
 import { generate_pelotitus} from './generate_pelotitus';
    
@@ -12,17 +13,20 @@ import {King_Kube} from './Enemies/King_Kube/king_kube_kontroller';
 import { load_king_kube } from './Enemies/King_Kube/king_kube_loader';
 
 import { spaceBackground } from './loaders/loadTextureCube';
-import { generate_PointLight,generate_AmbientLight,generate_SpotLight } from './loaders/light_loader';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-function getRandomFloat(min, max, decimals) {
-  const str = (Math.random() * (max - min) + min).toFixed(decimals);
+import { load_stage } from './loaders/stage_loader';
 
-  return parseFloat(str);
-}
 
-//sempre é necessário 3 passos para criar um render: a cena, a camera e o renderizador 
+
+//iniciando a fisica
+var timeStep=1/60; // segundos
+let world = new CANNON.World();
+world.gravity.set(0,-9.82,0);
+world.broadphase = new CANNON.NaiveBroadphase();
+world.solver.iterations = 10;
+
+//Iniciando o ThreeJS
 
 //Cena
 const scene = new THREE.Scene(); //cria uma cena vazia
@@ -34,15 +38,13 @@ const renderer = new THREE.WebGLRenderer({ //cria um renderizador que vai render
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 
-
 //Camera
 var camera = new CameraController(75, window.innerWidth / window.innerHeight, 0.1, 1000, renderer); //cria uma câmera nova na cena
-
 
 renderer.render(scene,camera.camera);
 renderer.shadowMap.enabled = true; //habilita o mapeamento de sombras
 
-//Ajustar o tamanho da janela ao tamanho da tela do usuário
+//Ajuste de tamanho da janela
 function onWindowResize() {
   camera.camera.aspect = window.innerWidth / window.innerHeight;
   camera.camera.updateProjectionMatrix();
@@ -50,39 +52,8 @@ function onWindowResize() {
 }
 window.addEventListener('resize', onWindowResize);
 
-//adicionando luzes
-// generate_PointLight(scene,0xffffff,new THREE.Vector3(100,200,100),1,true);
-generate_PointLight(scene,0xffffff,new THREE.Vector3(0,200,0),1,true);
-generate_PointLight(scene,0xffffff,new THREE.Vector3(-100,200,800),1,true);
-generate_PointLight(scene,0xffffff,new THREE.Vector3(100,200,800),1,true);
-// generate_AmbientLight(scene,0xffffff,new THREE.Vector3(0,100,800),1);
 
-// const gridHelper = new THREE.GridHelper(200,50); //cria um plano de auxilio para o dev
-// scene.add(gridHelper); //adiciona o gridhelper a cena
-
-
-//gerando o Solo
-// const floorGeometry = new THREE.BoxGeometry(128,4,128);
-// const floorTexture = new THREE.TextureLoader().load(".\\textures\\floors\\checkered_texture.jpg"); //material que vai ser aplicado na geometria
-// const floor = new THREE.Mesh(floorGeometry,new THREE.MeshStandardMaterial({map: floorTexture})); //a junção da forma geometrica com o material
-// floor.receiveShadow = true;
-// floor.position.setX(0);
-// floor.position.setY(-12); //antes> -30
-// floor.position.setZ(0);
-
-// scene.add(floor)
-
-new GLTFLoader().load('models/Stage1/stage1.gltf', function (gltf) {
-  const model = gltf.scene;
-  model.position.setY(-10);
-  model.traverse(function (object: any) {
-      if (object.isMesh) {
-        // object.castShadow = true;
-        object.receiveShadow = true;
-      }
-  });
-  scene.add(model);
-});
+const fase = await load_stage(scene, world);
 
 //função que gera aleatoriamente esferar na cena
 // let stars : GLTF[] = [];
@@ -95,8 +66,10 @@ let female_pelotitus : GLTF[] = [];
 female_pelotitus = generate_pelotitus(scene,6,'./models/pelotitus/female/pelotitus_female.gltf')
 
 //Gerando o personagem principal e seu controlador de movimento e animação 
-let ballusModel = await generate_ballus(scene);
-let playerController = new BallusController(ballusModel, camera.cameraControls,camera.camera,'Idle');
+let ballus = await generate_ballus(scene, world);
+let ballusModel: THREE.Group = ballus[0];
+let ballusBody: CANNON.Body = ballus[1];
+let playerController = new BallusController(ballusModel,ballusBody, camera.cameraControls,camera.camera,'Idle');
 
 //Gerando o King Kube
 let king_kube_model = await load_king_kube(scene);
@@ -124,10 +97,21 @@ document.addEventListener('keyup', (event) => {
 //função que será responsável por renderizar cada atualização da cena
 const clock = new THREE.Clock();
 
+function updatePhysics() {
+
+  // Step the physics world
+  world.step(timeStep);
+
+
+}
+let updaterDelta
 function animate(){ 
+
   requestAnimationFrame(animate);
 
-  let updaterDelta = clock.getDelta();
+  updaterDelta = clock.getDelta();
+  // updaterDelta = Math.min(clock.getDelta(), 0.1)
+  world.step(updaterDelta)
   if (playerController){
     playerController.update(updaterDelta,keysPressed)
     king_kube.update(updaterDelta, playerController.model);
@@ -138,16 +122,7 @@ function animate(){
     //   model.traverse( (child) => { if (child.isMesh) child.material = normalTexture; })
     // }
   }
-
-  //Como a cena vai ser atualizada estará escrito tudo aqui dentro
-  // if (ballus){
-  //   ballus.rotation.x += 0.01;
-  //   ballus.rotation.y += 0.04;
-  //   ballus.rotation.z += 0.08;
-  //   camera.lookAt( ballus.position );
-  // }
-
-
+  // updatePhysics();
   // if (stars){
   //   let i = 0;
   //   while (i < stars.length) {
@@ -156,11 +131,11 @@ function animate(){
   //     stars[i].scene.rotateX(getRandomFloat(0.01,0.08,4));
   //     i++;
   // }
-  // }
-  // mod.rotation.x += 1;
+  // 
 
   camera.cameraControls.update(); //atualiza a câmera conforme o movimento do mouse
 
+  // updatePhysics();
 
   renderer.render( scene, camera.camera);
 }

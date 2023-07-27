@@ -1,13 +1,19 @@
-import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls' //controlar a câmera via mouse
 import * as THREE from 'three';
+import * as CANNON from 'cannon-es';
+import { threeToCannon, ShapeType } from 'three-to-cannon';
+import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls' //controlar a câmera via mouse
 import { A, D, DIRECTIONS, S, W, ACTION } from '../utils';
 import { normalTexture, angryTexture, superTexture } from '../loaders/load_ballus_textures';
+import { RigidBody } from '@dimforge/rapier3d';
 
 export class BallusController {
     
     model: THREE.Group
     orbitControls: OrbitControls;
     camera : THREE.Camera;
+
+    //CANNON.JS
+    body: CANNON.Body;
 
     run: boolean = false;
     super: boolean = false;
@@ -32,8 +38,10 @@ export class BallusController {
     fastRoll = 0.5;
     slowRoll = 0.3;
 
-    constructor(model: THREE.Group,orbitControls: OrbitControls, camera:THREE.Camera, currentAction: string){
+    constructor(model: THREE.Group,body:CANNON.Body, orbitControls: OrbitControls, camera:THREE.Camera, currentAction: string, ){
         this.model = model;
+        this.body = body;
+
         this.orbitControls = orbitControls;
         this.camera = camera;
         this.currentAction = currentAction;
@@ -83,9 +91,13 @@ export class BallusController {
                 // com todos os dados calculados, movemos Ballus e a câmera	
                 const moveX = this.walkDirection.x * velocity * delta
                 const moveZ = this.walkDirection.z * velocity * delta
-                this.model.position.x += moveX
-                this.model.position.z += moveZ
-                this.updateCameraTarget(moveX, moveZ)
+                // this.model.position.x += moveX
+                // this.model.position.z += moveZ
+                this.model.position.set(this.body.position.x, this.body.position.y, this.body.position.z)
+                // this.model.position.x = this.body.position.x
+                // this.model.position.z = this.body.position.z
+                // this.model.position.y = this.body.position.y
+                // this.updateCameraTarget(moveX, moveZ)
                 
                 
             }
