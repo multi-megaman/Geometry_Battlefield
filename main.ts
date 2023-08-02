@@ -53,7 +53,7 @@ function onWindowResize() {
 window.addEventListener('resize', onWindowResize);
 
 
-const fase = await load_stage(scene, world);
+const {fase, materialFase} = await load_stage(scene, world);
 
 //função que gera aleatoriamente esferar na cena
 // let stars : GLTF[] = [];
@@ -69,6 +69,7 @@ female_pelotitus = generate_pelotitus(scene,6,'./models/pelotitus/female/pelotit
 let ballus = await generate_ballus(scene, world);
 let ballusModel: THREE.Group = ballus[0];
 let ballusBody: CANNON.Body = ballus[1];
+let ballusMaterial: CANNON.Material = ballus[2];
 let playerController = new BallusController(ballusModel,ballusBody, camera.cameraControls,camera.camera,'Idle');
 
 //Gerando o King Kube
@@ -80,6 +81,13 @@ king_kube.model.position.setZ(-350);
 scene.background = spaceBackground;
 scene.environment = spaceBackground;
 
+
+//Como a colisão entre o Ballus e o mundo deve ocorrer:
+const colisaoBallusMundo = new CANNON.ContactMaterial(
+  ballusMaterial,
+  materialFase,
+  {friction: 1}
+);
 //Função que gerencia os controles de movimentação:
 const keysPressed = {};
 document.addEventListener('keydown', (event) => {
@@ -94,17 +102,9 @@ document.addEventListener('keyup', (event) => {
   (keysPressed as any)[event.key.toLocaleLowerCase()] = false  
 }, false);
 
-//função que será responsável por renderizar cada atualização da cena
 const clock = new THREE.Clock();
-
-function updatePhysics() {
-
-  // Step the physics world
-  world.step(timeStep);
-
-
-}
 let updaterDelta
+//função que será responsável por renderizar cada atualização da cena
 function animate(){ 
 
   requestAnimationFrame(animate);

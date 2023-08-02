@@ -17,7 +17,7 @@ export async function load_stage(scene, world){
   var model;
   model = await modelLoader.loadAsync('models/Stage1/stage1.gltf'); //Stage 1
   model = model.scene;
-  model.position.setY(0);
+  model.position.setY(-600);
   model.traverse(function (object: any) {
       if (object.isMesh) {
         // object.castShadow = true;
@@ -26,23 +26,15 @@ export async function load_stage(scene, world){
   });
   
   //CANNON.JS
-  const stageMaterial = new CANNON.Material();
-  model.traverse((child) => {
-    if (child.isMesh) {
-      // const body = convertObjectToCannon(child);
-      const result = threeToCannon(child, {type: ShapeType.BOX});
-      const {shape, offset, quaternion} = result;
-      const stageBody = new CANNON.Body({mass: 0, material: stageMaterial});
-      stageBody.addShape(shape, offset, quaternion);
-      stageBody.position.x = child.position.x
-      stageBody.position.y = child.position.y
-      stageBody.position.z = child.position.z
-      console.log(child.position)
-      world.addBody(stageBody);
-    }
-  });
+  const result = threeToCannon(model, {type: ShapeType.BOX});
+  const {shape, offset, quaternion} = result;
+  const stageBody = new CANNON.Body({mass: 0});
+  stageBody.addShape(shape, offset, quaternion);
+  stageBody.position.x = model.position.x
+  stageBody.position.y = model.position.y
+  stageBody.position.z = model.position.z
   
-  // world.addBody(stageBody)
+  world.addBody(stageBody)
   scene.add(model);
-  return [model, stageMaterial];
+  return model;
 };

@@ -61,87 +61,20 @@ export class BallusController {
     }
 
     public update (delta : number, keysPressed: any){
-        const directionPressed = DIRECTIONS.some(key => keysPressed[key] == true) //qualquer botão de movimento ser pressionado
-        var directionOffset
-        let moveX = 0
-        let moveZ = 0
-        let moveY = 0
-        if (directionPressed){ //se move para frente
-            // velocidade de rolamento e de corrida
-            const velocity = this.run ? this.runVelocity : this.walkVelocity
-            var roll = this.run ? this.fastRoll : this.slowRoll
-            roll = this.super ? this.superRoll : roll
-            //calcula o angulo da câmera 
-            var angleYCameraDirection = Math.atan2(
-                (this.camera.position.x - this.model.position.x),
-                (this.camera.position.z - this.model.position.z)
-                )
-                //calculo do offset do movimento diagonal
-                directionOffset = this.directionOffset(keysPressed)
-                
-                //Fazendo a devida rotação
-                this.rotateQuarternion.setFromAxisAngle(this.rotateAngle, angleYCameraDirection + directionOffset);
-                this.model.quaternion.rotateTowards(this.rotateQuarternion, 0.2); //estamos rotacionando o Ballus
-                this.model.rotateX(-roll) //efeito de rolar para frente
-
-                // Calculando a direção do movimento
-                this.camera.getWorldDirection(this.walkDirection)
-                this.walkDirection.y = 0
-                this.walkDirection.normalize()
-                this.walkDirection.applyAxisAngle(this.rotateAngle, directionOffset)
-                
-                
-                // com todos os dados calculados, movemos Ballus
-                moveX = this.walkDirection.x * velocity * delta
-                moveZ = this.walkDirection.z * velocity * delta
-                this.body.position.x += moveX
-                this.body.position.z += moveZ
-                // moveY = (this.model.position.y - this.body.position.y) * delta
-                // this.model.position.x = this.body.position.x
-                // this.model.position.z = this.body.position.z
-                // this.model.position.y = this.body.position.y
-                
-                
-            }
-            
-        this.updateCameraTarget(moveX, moveZ, moveY)
-        this.model.position.copy(this.body.position)
-        
-        //update Ballus texture
-        if (this.run){
-            this.changeTexture(angryTexture)
-        }
-        else {
-            this.changeTexture(normalTexture)
-        }
-
-        //change to Super Ballus
-        if (keysPressed[ACTION] == true){
-            this.toggleSuper()
-        }
-
-        //if super
-        if (this.super){
-            this.changeTexture(superTexture)
-            this.runVelocity = this.superRunVelocity;
-            this.walkVelocity = this.superWalkVelocity;
-        }
-        else{
-            this.runVelocity = this.normalRunVelocity;
-            this.walkVelocity = this.normalWalkVelocity;
-        }
+        this.model.position.set(this.body.position.x, this.body.position.y, this.body.position.z);
+        // this.camera.position.x = this.model.position.x;
+        // this.camera.position.add(new THREE.Vector3(0, 5, 10)); // Ajuste a distância da câmera em relação ao objeto
+        this.camera.lookAt(this.model.position);
     }
 
-    private updateCameraTarget(moveX: number, moveZ: number, moveY: number) { //faz o update da câmera baseado no movimento do personagem
+    private updateCameraTarget(moveX: number, moveZ: number) { //faz o update da câmera baseado no movimento do personagem
         // move a câmera
-        // this.camera.position.x += moveX
-        // this.camera.position.z += moveZ
-        // this.camera.position.y += moveY
-        this.camera.position.y = this.model.position.y + 100
+        this.camera.position.x += moveX
+        this.camera.position.z += moveZ
 
         // atualiza o alvo da câmera, ou seja, para quem a câmera está olhando
         this.cameraTarget.x = this.model.position.x
-        this.cameraTarget.y = this.model.position.y + 50
+        this.cameraTarget.y = this.model.position.y + 20
         this.cameraTarget.z = this.model.position.z
         this.orbitControls.target = this.cameraTarget
     }

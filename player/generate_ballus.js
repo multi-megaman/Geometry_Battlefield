@@ -20,15 +20,18 @@ export async function generate_ballus(scene, world){
     } );
 
     //CANNON.JS
+    const ballusMaterial = new CANNON.Material();
     const result = threeToCannon(model, {type: ShapeType.SPHERE});
     const {shape, offset, quaternion} = result;
-    const ballusBody = new CANNON.Body({mass: 0});
+    const ballusBody = new CANNON.Body({mass: 10, material: ballusMaterial});
     ballusBody.addShape(shape, offset, quaternion);
     ballusBody.position.x = model.position.x
     ballusBody.position.y = model.position.y
     ballusBody.position.z = model.position.z
+    ballusBody.linearDamping = 0.25;
+    ballusBody.angularDamping = 1;
 
     scene.add(model);
     world.addBody(ballusBody);
-    return [model, ballusBody];
+    return [model, ballusBody, ballusMaterial];
 }
