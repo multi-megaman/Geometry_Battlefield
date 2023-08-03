@@ -23,7 +23,7 @@ export async function generate_ballus(scene, world){
     const ballusMaterial = new CANNON.Material();
     const result = threeToCannon(model, {type: ShapeType.SPHERE});
     const {shape, offset, quaternion} = result;
-    const ballusBody = new CANNON.Body({mass: 10, material: ballusMaterial});
+    const ballusBody = new CANNON.Body({mass: 1, material: ballusMaterial});
     ballusBody.addShape(shape, offset, quaternion);
     ballusBody.position.x = model.position.x
     ballusBody.position.y = model.position.y

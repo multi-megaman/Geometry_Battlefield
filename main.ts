@@ -22,7 +22,7 @@ import { load_stage } from './loaders/stage_loader';
 //iniciando a fisica
 var timeStep=1/60; // segundos
 let world = new CANNON.World();
-world.gravity.set(0,-9.82,0);
+world.gravity.set(0,-40,0);
 world.broadphase = new CANNON.NaiveBroadphase();
 world.solver.iterations = 10;
 
@@ -58,6 +58,22 @@ const {fase, materialFase} = await load_stage(scene, world);
 //função que gera aleatoriamente esferar na cena
 // let stars : GLTF[] = [];
 // stars = generate_stars(scene,150);
+
+const sphereGeometry = new THREE.SphereGeometry(10)
+const normalMaterial = new THREE.MeshNormalMaterial()
+const sphereMesh = new THREE.Mesh(sphereGeometry, normalMaterial)
+sphereMesh.position.x = -30
+sphereMesh.position.y = 100
+sphereMesh.castShadow = true
+scene.add(sphereMesh)
+const sphereShape = new CANNON.Sphere(5)
+const sphereBody = new CANNON.Body({ mass: 1 })
+sphereBody.linearDamping = 0.25
+sphereBody.addShape(sphereShape)
+sphereBody.position.x = sphereMesh.position.x
+sphereBody.position.y = sphereMesh.position.y
+sphereBody.position.z = sphereMesh.position.z
+world.addBody(sphereBody)
 
 let male_pelotitus : GLTF[] = [];
 male_pelotitus = generate_pelotitus(scene,6,'./models/pelotitus/male/pelotitus_male.gltf');
@@ -132,7 +148,18 @@ function animate(){
   //     i++;
   // }
   // 
-
+  sphereMesh.position.set(
+    sphereBody.position.x,
+    sphereBody.position.y,
+    sphereBody.position.z
+  )
+  sphereMesh.quaternion.set(
+    sphereBody.quaternion.x,
+    sphereBody.quaternion.y,
+    sphereBody.quaternion.z,
+    sphereBody.quaternion.w
+  )
+  // console.log(playerController.body.position)
   camera.cameraControls.update(); //atualiza a câmera conforme o movimento do mouse
 
   // updatePhysics();

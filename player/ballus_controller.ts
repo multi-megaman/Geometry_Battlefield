@@ -22,7 +22,7 @@ export class BallusController {
     //Temporary data
     walkDirection = new THREE.Vector3();
     rotateAngle = new THREE.Vector3(0,1,0);
-    rollAngle = new THREE.Vector3(1,0,0);
+    rollAngle = new THREE.Vector3(1,0,0); 
     rotateQuarternion: THREE.Quaternion = new THREE.Quaternion();
     cameraTarget = new THREE.Vector3();
 
@@ -105,6 +105,7 @@ export class BallusController {
             }
             
         this.updateCameraTarget(moveX, moveZ, moveY)
+        
         this.model.position.copy(this.body.position)
         
         //update Ballus texture
