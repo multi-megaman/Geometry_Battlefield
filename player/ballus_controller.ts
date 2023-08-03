@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import { threeToCannon, ShapeType } from 'three-to-cannon';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls' //controlar a câmera via mouse
-import { A, D, DIRECTIONS, S, W, ACTION } from '../utils';
+import { A, D, DIRECTIONS, S, W, ACTION, SPACE } from '../utils';
 import { normalTexture, angryTexture, superTexture } from '../loaders/load_ballus_textures';
 import { RigidBody } from '@dimforge/rapier3d';
 
@@ -66,6 +66,7 @@ export class BallusController {
         let moveX = 0
         let moveZ = 0
         let moveY = 0
+
         if (directionPressed){ //se move para frente
             // velocidade de rolamento e de corrida
             const velocity = this.run ? this.runVelocity : this.walkVelocity
@@ -104,35 +105,40 @@ export class BallusController {
                 
             }
             
-        this.updateCameraTarget(moveX, moveZ, moveY)
-        
-        this.model.position.copy(this.body.position)
-        
-        //update Ballus texture
-        if (this.run){
-            this.changeTexture(angryTexture)
-        }
-        else {
-            this.changeTexture(normalTexture)
-        }
+            //Parte do pulo
+            if (keysPressed[SPACE] == true){
+                this.body.applyImpulse(new CANNON.Vec3(0, 25, 0), new CANNON.Vec3(0, 0, 0))
+            }
 
-        //change to Super Ballus
-        if (keysPressed[ACTION] == true){
-            this.toggleSuper()
-        }
+            this.updateCameraTarget(moveX, moveZ, moveY)
+            
+            this.model.position.copy(this.body.position)
+            
+            //update Ballus texture
+            if (this.run){
+                this.changeTexture(angryTexture)
+            }
+            else {
+                this.changeTexture(normalTexture)
+            }
 
-        //if super
-        if (this.super){
-            this.changeTexture(superTexture)
-            this.runVelocity = this.superRunVelocity;
-            this.walkVelocity = this.superWalkVelocity;
-        }
-        else{
-            this.runVelocity = this.normalRunVelocity;
-            this.walkVelocity = this.normalWalkVelocity;
-        }
+            //change to Super Ballus
+            if (keysPressed[ACTION] == true){
+                this.toggleSuper()
+            }
+
+            //if super
+            if (this.super){
+                this.changeTexture(superTexture)
+                this.runVelocity = this.superRunVelocity;
+                this.walkVelocity = this.superWalkVelocity;
+            }
+            else{
+                this.runVelocity = this.normalRunVelocity;
+                this.walkVelocity = this.normalWalkVelocity;
+            }
     }
-
+    
     private updateCameraTarget(moveX: number, moveZ: number, moveY: number) { //faz o update da câmera baseado no movimento do personagem
         // move a câmera
         // this.camera.position.x += moveX

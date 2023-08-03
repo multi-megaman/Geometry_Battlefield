@@ -22,7 +22,7 @@ import { load_stage } from './loaders/stage_loader';
 //iniciando a fisica
 var timeStep=1/60; // segundos
 let world = new CANNON.World();
-world.gravity.set(0,-40,0);
+world.gravity.set(0,-100,0);
 world.broadphase = new CANNON.NaiveBroadphase();
 world.solver.iterations = 10;
 
