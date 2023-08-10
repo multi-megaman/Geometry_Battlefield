@@ -11,7 +11,9 @@ export class BallusController {
     model: THREE.Group
     orbitControls: OrbitControls;
     camera : THREE.Camera;
-
+    jumping: boolean = false;
+    canJump: boolean = true;
+    jumpStartTime: number = 0;
     //CANNON.JS
     body: CANNON.Body;
 
@@ -27,6 +29,8 @@ export class BallusController {
     cameraTarget = new THREE.Vector3();
 
     //Constants
+    maxJumpDuration = 0.2;
+
     normalRunVelocity = 120;
     normalWalkVelocity = 60;
     superRunVelocity = 480;
@@ -45,7 +49,7 @@ export class BallusController {
         this.orbitControls = orbitControls;
         this.camera = camera;
         this.currentAction = currentAction;
-        this.updateCameraTarget(0,0);
+        this.updateCameraTarget(0,0,0);
     }
 
     public toggleRun() {
@@ -107,7 +111,22 @@ export class BallusController {
             
             //Parte do pulo
             if (keysPressed[SPACE] == true){
-                this.body.applyImpulse(new CANNON.Vec3(0, 25, 0), new CANNON.Vec3(0, 0, 0))
+                if (this.canJump){
+                    if (!this.jumping){
+                        this.jumping = true;
+                        this.jumpStartTime = performance.now();
+                    }
+                }
+            }
+
+            if (this.jumping){
+                const jumpDuration = (performance.now() - this.jumpStartTime) / 1000;
+                if (jumpDuration > this.maxJumpDuration){
+                    this.jumping = false;
+                    this.canJump = false;
+                    console.log("O pulo acabou")
+                }
+                this.body.applyImpulse(new CANNON.Vec3(0, 10, 0), new CANNON.Vec3(0, 0, 0))
             }
 
             this.updateCameraTarget(moveX, moveZ, moveY)
