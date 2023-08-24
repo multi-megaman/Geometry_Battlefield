@@ -69,6 +69,8 @@ export class BallusController {
     }
 
     public update (delta : number, keysPressed: any, keysReleased: any){
+        
+        
         const directionPressed = DIRECTIONS.some(key => keysPressed[key] == true) //qualquer botão de movimento ser pressionado
         var directionOffset
         let moveX = 0

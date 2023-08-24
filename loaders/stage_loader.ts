@@ -17,7 +17,7 @@ export async function load_stage(scene, world){
   var model;
   model = await modelLoader.loadAsync('models/Stage1/stage1.gltf'); //Stage 1
   model = model.scene;
-  model.position.setY(-100);
+  model.position.setY(0);
   model.traverse(function (object: any) {
       if (object.isMesh) {
         // object.castShadow = true;

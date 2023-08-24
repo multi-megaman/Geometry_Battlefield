@@ -11,6 +11,7 @@ import { CameraController } from './loaders/load_camera';
 
 import {King_Kube} from './Enemies/King_Kube/king_kube_kontroller';
 import { load_king_kube } from './Enemies/King_Kube/king_kube_loader';
+import { EnemySpawner } from './Enemies/King_Kube/enemy_spawner';
 
 import { spaceBackground } from './loaders/loadTextureCube';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
@@ -74,21 +75,21 @@ console.log(faseBody)
 // let stars : GLTF[] = [];
 // stars = generate_stars(scene,150);
 
-const sphereGeometry = new THREE.SphereGeometry(10)
-const normalMaterial = new THREE.MeshNormalMaterial()
-const sphereMesh = new THREE.Mesh(sphereGeometry, normalMaterial)
-sphereMesh.position.x = -30
-sphereMesh.position.y = 100
-sphereMesh.castShadow = true
-scene.add(sphereMesh)
-const sphereShape = new CANNON.Sphere(5)
-const sphereBody = new CANNON.Body({ mass: 1 })
-sphereBody.linearDamping = 0.25
-sphereBody.addShape(sphereShape)
-sphereBody.position.x = sphereMesh.position.x
-sphereBody.position.y = sphereMesh.position.y
-sphereBody.position.z = sphereMesh.position.z
-world.addBody(sphereBody)
+// const boxGeometry = new THREE.BoxGeometry(20,20,20)
+// const normalMaterial = new THREE.MeshToonMaterial()
+// const boxMesh = new THREE.Mesh(boxGeometry, normalMaterial)
+// boxMesh.position.x = -30
+// boxMesh.position.y = 100
+// boxMesh.castShadow = true
+// scene.add(boxMesh)
+// const boxShape = new CANNON.Box(new CANNON.Vec3(10,10,10))
+// const boxBody = new CANNON.Body({ mass: 1 })
+// boxBody.linearDamping = 0.25
+// boxBody.addShape(boxShape)
+// boxBody.position.x = boxMesh.position.x
+// boxBody.position.y = boxMesh.position.y
+// boxBody.position.z = boxMesh.position.z
+// world.addBody(boxBody)
 
 let male_pelotitus : GLTF[] = [];
 male_pelotitus = generate_pelotitus(scene,6,'./models/pelotitus/male/pelotitus_male.gltf');
@@ -106,8 +107,11 @@ let playerController = new BallusController(ballusModel,ballusBody, camera.camer
 //Gerando o King Kube
 let king_kube_model = await load_king_kube(scene);
 let king_kube = new King_Kube(king_kube_model);
-king_kube.model.position.setY(250);
+king_kube.model.position.setY(100);
 king_kube.model.position.setZ(-350);
+
+//Gerando o Spawner dos inimigos
+let enemy_spawner = new EnemySpawner(new THREE.Vector3(0,0,0), scene, world);
 
 scene.background = spaceBackground;
 scene.environment = spaceBackground;
@@ -148,20 +152,19 @@ const composer = new EffectComposer( renderer );
 composer.addPass( new RenderPass( scene, camera.camera ) );
 
 const bloomPass = new BloomPass(
-  0.5,
+  0.9,
   10,
   0.4,
 );
 composer.addPass( bloomPass );
 
 const filmPass = new FilmPass(
-  0.35,
+  0.01,
   0.025,
   648,
   false,
 );
 composer.addPass( filmPass );
-
 const outputPass = new OutputPass();
 composer.addPass( outputPass );
 
@@ -180,6 +183,7 @@ function animate(){
   if (playerController){
     playerController.update(updaterDelta,keysPressed, keysReleased)
     king_kube.update(updaterDelta, playerController.model);
+    enemy_spawner.update();
     // if (playerController.getRun()){
     //   model.traverse( (child) => { if (child.isMesh) child.material = angryTexture; })
     // }
@@ -197,17 +201,17 @@ function animate(){
   //     i++;
   // }
   // 
-  sphereMesh.position.set(
-    sphereBody.position.x,
-    sphereBody.position.y,
-    sphereBody.position.z
-  )
-  sphereMesh.quaternion.set(
-    sphereBody.quaternion.x,
-    sphereBody.quaternion.y,
-    sphereBody.quaternion.z,
-    sphereBody.quaternion.w
-  )
+  // boxMesh.position.set(
+  //   boxBody.position.x,
+  //   boxBody.position.y,
+  //   boxBody.position.z
+  // )
+  // boxMesh.quaternion.set(
+  //   boxBody.quaternion.x,
+  //   boxBody.quaternion.y,
+  //   boxBody.quaternion.z,
+  //   boxBody.quaternion.w
+  // )
   // console.log(playerController.body.position)
   camera.cameraControls.update(); //atualiza a câmera conforme o movimento do mouse
 
