@@ -10,6 +10,8 @@ export class BallusController {
     
     model: THREE.Group
     orbitControls: OrbitControls;
+    stageBody: CANNON.Body;
+    world: CANNON.World;
     camera : THREE.Camera;
     jumping: boolean = false;
     canJump: boolean = true;
@@ -29,7 +31,7 @@ export class BallusController {
     cameraTarget = new THREE.Vector3();
 
     //Constants
-    maxJumpDuration = 0.2;
+    maxJumpDuration = 0.5;
 
     normalRunVelocity = 120;
     normalWalkVelocity = 60;
@@ -42,9 +44,11 @@ export class BallusController {
     fastRoll = 0.5;
     slowRoll = 0.3;
 
-    constructor(model: THREE.Group,body:CANNON.Body, orbitControls: OrbitControls, camera:THREE.Camera, currentAction: string, ){
+    constructor(model: THREE.Group,body:CANNON.Body, orbitControls: OrbitControls, camera:THREE.Camera, currentAction: string, stageBody: CANNON.Body, world: CANNON.World ){
         this.model = model;
         this.body = body;
+        this.stageBody = stageBody;
+        this.world = world;
 
         this.orbitControls = orbitControls;
         this.camera = camera;
@@ -64,7 +68,7 @@ export class BallusController {
         return this.run;
     }
 
-    public update (delta : number, keysPressed: any){
+    public update (delta : number, keysPressed: any, keysReleased: any){
         const directionPressed = DIRECTIONS.some(key => keysPressed[key] == true) //qualquer botão de movimento ser pressionado
         var directionOffset
         let moveX = 0
@@ -117,16 +121,35 @@ export class BallusController {
                         this.jumpStartTime = performance.now();
                     }
                 }
+                if (this.jumping){
+                    const jumpDuration = (performance.now() - this.jumpStartTime) / 1000;
+                    if (jumpDuration > this.maxJumpDuration){
+                        this.jumping = false;
+                        this.canJump = false;
+                        // console.log("O pulo acabou")
+                    }
+                    this.body.applyImpulse(new CANNON.Vec3(0, 10, 0), new CANNON.Vec3(0, 0, 0))
+                }
+            }
+            if (keysReleased[SPACE] == true){
+                this.jumping = false;
+                this.canJump = false;
+                // console.log("O pulo acabou")
+                keysReleased[SPACE] = false;
             }
 
-            if (this.jumping){
-                const jumpDuration = (performance.now() - this.jumpStartTime) / 1000;
-                if (jumpDuration > this.maxJumpDuration){
-                    this.jumping = false;
-                    this.canJump = false;
-                    console.log("O pulo acabou")
-                }
-                this.body.applyImpulse(new CANNON.Vec3(0, 10, 0), new CANNON.Vec3(0, 0, 0))
+            var results = [];
+            //Checando para ver se houve um contato entre o Ballus e o StageBody
+            this.world.narrowphase.getContacts([this.body], [this.stageBody], this.world, results, [], [], []);
+            // console.log(results)
+
+            if (results.length <= 0){
+                this.canJump = false;
+                // console.log("O pulo não pode ser feito");
+            }
+            else {
+                this.canJump = true;
+                // console.log("O pulo pode ser feito");
             }
 
             this.updateCameraTarget(moveX, moveZ, moveY)

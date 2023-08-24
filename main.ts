@@ -17,12 +17,24 @@ import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 
 import { load_stage } from './loaders/stage_loader';
 
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { BloomPass } from 'three/examples/jsm/postprocessing/BloomPass.js';
+import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
+
+const fov = 75;
+const aspect = 2;
+const near = 0.1;
+const far = 5;
+// const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+// camera.position.z = 2;
 
 
 //iniciando a fisica
 var timeStep=1/60; // segundos
 let world = new CANNON.World();
-world.gravity.set(0,-100,0);
+world.gravity.set(0,-200,0);
 world.broadphase = new CANNON.NaiveBroadphase();
 world.solver.iterations = 10;
 
@@ -53,7 +65,10 @@ function onWindowResize() {
 window.addEventListener('resize', onWindowResize);
 
 
-const {fase, materialFase} = await load_stage(scene, world);
+const [fase, materialFase, faseBody] = await load_stage(scene, world);
+console.log(fase)
+console.log(materialFase)
+console.log(faseBody)
 
 //função que gera aleatoriamente esferar na cena
 // let stars : GLTF[] = [];
@@ -86,7 +101,7 @@ let ballus = await generate_ballus(scene, world);
 let ballusModel: THREE.Group = ballus[0];
 let ballusBody: CANNON.Body = ballus[1];
 let ballusMaterial: CANNON.Material = ballus[2];
-let playerController = new BallusController(ballusModel,ballusBody, camera.cameraControls,camera.camera,'Idle');
+let playerController = new BallusController(ballusModel,ballusBody, camera.cameraControls,camera.camera,'Idle', faseBody, world);
 
 //Gerando o King Kube
 let king_kube_model = await load_king_kube(scene);
@@ -118,6 +133,40 @@ document.addEventListener('keyup', (event) => {
   (keysPressed as any)[event.key.toLocaleLowerCase()] = false  
 }, false);
 
+const keysReleased = {};
+document.addEventListener('keyup', (event) => {
+    (keysReleased as any)[event.key.toLocaleLowerCase()] = true  
+}, false);
+document.addEventListener('keydown', (event) => {
+  (keysReleased as any)[event.key.toLocaleLowerCase()] = false  
+}, false);
+
+
+//Pós processamento
+
+const composer = new EffectComposer( renderer );
+composer.addPass( new RenderPass( scene, camera.camera ) );
+
+const bloomPass = new BloomPass(
+  0.5,
+  10,
+  0.4,
+);
+composer.addPass( bloomPass );
+
+const filmPass = new FilmPass(
+  0.35,
+  0.025,
+  648,
+  false,
+);
+composer.addPass( filmPass );
+
+const outputPass = new OutputPass();
+composer.addPass( outputPass );
+
+
+
 const clock = new THREE.Clock();
 let updaterDelta
 //função que será responsável por renderizar cada atualização da cena
@@ -129,7 +178,7 @@ function animate(){
   // updaterDelta = Math.min(clock.getDelta(), 0.1)
   world.step(updaterDelta)
   if (playerController){
-    playerController.update(updaterDelta,keysPressed)
+    playerController.update(updaterDelta,keysPressed, keysReleased)
     king_kube.update(updaterDelta, playerController.model);
     // if (playerController.getRun()){
     //   model.traverse( (child) => { if (child.isMesh) child.material = angryTexture; })
@@ -165,6 +214,7 @@ function animate(){
   // updatePhysics();
 
   renderer.render( scene, camera.camera);
+  composer.render( updaterDelta );
 }
 
 animate();
