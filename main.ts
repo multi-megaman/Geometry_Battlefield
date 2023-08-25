@@ -183,7 +183,7 @@ function animate(){
   if (playerController){
     playerController.update(updaterDelta,keysPressed, keysReleased)
     king_kube.update(updaterDelta, playerController.model);
-    enemy_spawner.update();
+    enemy_spawner.update(updaterDelta);
     // if (playerController.getRun()){
     //   model.traverse( (child) => { if (child.isMesh) child.material = angryTexture; })
     // }

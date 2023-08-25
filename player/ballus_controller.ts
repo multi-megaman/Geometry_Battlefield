@@ -31,7 +31,7 @@ export class BallusController {
     cameraTarget = new THREE.Vector3();
 
     //Constants
-    maxJumpDuration = 0.5;
+    maxJumpDuration = 0.33;
 
     normalRunVelocity = 120;
     normalWalkVelocity = 60;

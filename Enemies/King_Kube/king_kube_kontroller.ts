@@ -31,12 +31,12 @@ export class King_Kube{
         }
 
         if (this.right_hand_up){
-            this.right_hand.position.y += 5*delta;
-            this.left_hand.position.y -= 5*delta;
+            this.right_hand.position.y += 20*delta;
+            this.left_hand.position.y -= 20*delta;
         }
         else{
-            this.right_hand.position.y -= 5*delta;
-            this.left_hand.position.y += 5*delta;
+            this.right_hand.position.y -= 20*delta;
+            this.left_hand.position.y += 20*delta;
         }
 
         //fazer com que a cabeça olhe para o target
