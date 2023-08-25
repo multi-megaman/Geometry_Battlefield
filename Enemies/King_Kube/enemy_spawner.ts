@@ -40,6 +40,8 @@ export class EnemySpawner {
     createBox(){
       // Crie um cubo diferente
       const randomSize = Math.random() * 10 + 10; // Tamanho aleatório entre 10 e 20
+      const randomMass = Math.random() * 2 + 1; // Massa aleatória entre 1 e 3
+      const randomImpulse = Math.random() * 500 + 1000; // Impulso aleatório entre 500 e 1000
       const newBoxGeometry = new THREE.BoxGeometry(randomSize, randomSize, randomSize);
       const newBoxMesh = new THREE.Mesh(newBoxGeometry, this.normalMaterial);
 
@@ -52,7 +54,7 @@ export class EnemySpawner {
       this.scene.add(newBoxMesh);
 
       // Crie um novo corpo de física para o novo cubo
-      const newBoxBody = new CANNON.Body({ mass: 1 });
+      const newBoxBody = new CANNON.Body({ mass: randomMass });
       const newBoxShape = new CANNON.Box(new CANNON.Vec3(randomSize / 2, randomSize / 2, randomSize / 2));
       newBoxBody.addShape(newBoxShape);
       // newBoxBody.position.copy(newBoxMesh.position);
@@ -62,7 +64,10 @@ export class EnemySpawner {
 
       this.world.addBody(newBoxBody);
       this.boxes.push({ mesh: newBoxMesh, body: newBoxBody, despawnTime: 0 })
+
       console.log("caixa criada")
+      //aplicando um impulso ao cubo criado
+      newBoxBody.applyImpulse(new CANNON.Vec3(0, -500, 0), new CANNON.Vec3(0, 0, 0))
     }
 
     updateBoxes(deltaTime){
