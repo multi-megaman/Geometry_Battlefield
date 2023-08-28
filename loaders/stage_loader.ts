@@ -28,7 +28,7 @@ export async function load_stage(scene, world){
   //CANNON.JS
   const stageMaterial = new CANNON.Material();
   // model.traverse((child) => {
-  //   if (child.isMesh) {
+  //   if (child.isMesh) {b
       // const body = convertObjectToCannon(child);
     const result = threeToCannon(model, {type: ShapeType.BOX});
     const {shape, offset, quaternion} = result;

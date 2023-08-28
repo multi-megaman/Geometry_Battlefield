@@ -2,7 +2,9 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import { threeToCannon, ShapeType } from 'three-to-cannon';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader' //carregar os modelos
+
 export async function generate_ballus(scene, world){
+    //THREE.JS
     const modelLoader =new GLTFLoader();
     var model;
     model = await modelLoader.loadAsync('./models/ballus/ballus.gltf');
