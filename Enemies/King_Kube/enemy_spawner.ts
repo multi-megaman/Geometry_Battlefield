@@ -7,13 +7,36 @@ export class EnemySpawner {
     scene: THREE.Scene;
     world: CANNON.World;
 
-    boxGeometry: THREE.BoxGeometry;
-    normalMaterial = new THREE.MeshToonMaterial();
+    
+
+    portalGeometry: THREE.BoxGeometry;
+    portalTexture = new THREE.TextureLoader().load('../../textures/blackhole.png');
+    portalMaterial = new THREE.MeshToonMaterial({map: this.portalTexture, transparent: true});
+    portalMesh: THREE.Mesh;
+
+    // boxTexture = new THREE.TextureLoader().load('../../textures/kubiku.png');
+    // boxTexture = new THREE.CubeTextureLoader().load([
+    //   '../../textures/kubiku/right.png',
+    //   '../../textures/kubiku/left.png',
+    //   '../../textures/kubiku/top.png',
+    //   '../../textures/kubiku/bottom.png',
+    //   '../../textures/kubiku/front.png',
+    //   '../../textures/kubiku/back.png',
+    // ]); //carrega as 6 faces do cubo
+    loader = new THREE.TextureLoader();
+    normalMaterial = [
+      new THREE.MeshBasicMaterial( { map: this.loader.load("../../textures/kubiku/right.png") } ),
+      new THREE.MeshBasicMaterial( { map: this.loader.load("../../textures/kubiku/left.png") } ),
+      new THREE.MeshBasicMaterial( { map: this.loader.load("../../textures/kubiku/top.png") } ),
+      new THREE.MeshBasicMaterial( { map: this.loader.load("../../textures/kubiku/bottom.png") } ),
+      new THREE.MeshBasicMaterial( { map: this.loader.load("../../textures/kubiku/front.png") } ),
+      new THREE.MeshBasicMaterial( { map: this.loader.load("../../textures/kubiku/back.png") } ),
+    ];
+    // normalMaterial = new THREE.MeshToonMaterial({color:0xffffff ,map: this.boxTexture});
     boxMesh: THREE.Mesh;
 
     boxBody: CANNON.Body = new CANNON.Body({ mass: 1 });
     boxShape: CANNON.Box = new CANNON.Box(new CANNON.Vec3(10,10,10));
-
     elapsedTime: number = 0;
     spawnInterval: number = 1; // Intervalo de 5 segundos
     despawnInterval: number = this.spawnInterval*3; // Intervalo de 10 segundos
@@ -21,16 +44,16 @@ export class EnemySpawner {
 
     boxes: Array<any> = [];
 
-    constructor (position: THREE.Vector3, scene: THREE.Scene, world: CANNON.World, impulseVector, boxGeometry: THREE.BoxGeometry){
+    constructor (position: THREE.Vector3, scene: THREE.Scene, world: CANNON.World, impulseVector, portalGeometry: THREE.BoxGeometry){
         this.position = position;
         this.scene = scene;
         this.world = world;
         this.impulseVector = impulseVector;
-        this.boxGeometry = boxGeometry;
-        this.boxMesh = new THREE.Mesh(this.boxGeometry, this.normalMaterial)
-        this.boxMesh.position.copy(position)
-        this.boxMesh.castShadow = true
-        this.scene.add(this.boxMesh)
+        this.portalGeometry = portalGeometry;
+        this.portalMesh = new THREE.Mesh(this.portalGeometry, this.portalMaterial)
+        this.portalMesh.position.copy(position)
+        this.portalMesh.castShadow = true
+        this.scene.add(this.portalMesh)
         // this.boxBody.linearDamping = 0.25
         // this.boxBody.addShape(this.boxShape)
         // this.boxBody.position.x = this.boxMesh.position.x
@@ -108,6 +131,11 @@ export class EnemySpawner {
       }
 
       this.updateBoxes(deltaTime);
+
+      //Efeito de rotacionar o portal, dependendo do impulseVector
+      this.portalMesh.rotateOnAxis(new THREE.Vector3(this.impulseVector.x,this.impulseVector.y,this.impulseVector.z), 0.05);
+
+      
       
       // // Atualize a posição e a rotação do cubo existente
       // this.boxMesh.position.set(this.boxBody.position.x, this.boxBody.position.y, this.boxBody.position.z);

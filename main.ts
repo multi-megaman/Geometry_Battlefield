@@ -108,11 +108,11 @@ king_kube.model.position.setY(100);
 king_kube.model.position.setZ(-350);
 
 //Gerando o Spawner dos inimigos
-let enemy_spawner = new EnemySpawner(new THREE.Vector3(0,250,0), scene, world, new CANNON.Vec3(0, 1, 0),new THREE.BoxGeometry(100,1,100));
-let enemy_spawner2 =new EnemySpawner(new THREE.Vector3(200,50,0), scene, world, new CANNON.Vec3(1, 0, 0), new THREE.BoxGeometry(1,100,100));
-let enemy_spawner3 =new EnemySpawner(new THREE.Vector3(-200,50,0), scene, world, new CANNON.Vec3(-1, 0, 0), new THREE.BoxGeometry(1,100,100));
-let enemy_spawner4 =new EnemySpawner(new THREE.Vector3(1,50,200), scene, world, new CANNON.Vec3(0, 0, 1), new THREE.BoxGeometry(100,100,1));
-let enemy_spawner5 =new EnemySpawner(new THREE.Vector3(1,50,-200), scene, world, new CANNON.Vec3(0, 0, -1), new THREE.BoxGeometry(100,100,1));
+let enemy_spawner = new EnemySpawner(new THREE.Vector3(0,250,0), scene, world, new CANNON.Vec3(0, 1, 0),new THREE.BoxGeometry(150,0,150));
+let enemy_spawner2 =new EnemySpawner(new THREE.Vector3(200,50,0), scene, world, new CANNON.Vec3(1, 0, 0), new THREE.BoxGeometry(0,150,150));
+let enemy_spawner3 =new EnemySpawner(new THREE.Vector3(-200,50,0), scene, world, new CANNON.Vec3(-1, 0, 0), new THREE.BoxGeometry(0,150,150));
+let enemy_spawner4 =new EnemySpawner(new THREE.Vector3(1,50,200), scene, world, new CANNON.Vec3(0, 0, 1), new THREE.BoxGeometry(150,150,0));
+let enemy_spawner5 =new EnemySpawner(new THREE.Vector3(1,50,-200), scene, world, new CANNON.Vec3(0, 0, -1), new THREE.BoxGeometry(150,150,0));
 
 scene.background = spaceBackground;
 scene.environment = spaceBackground;
