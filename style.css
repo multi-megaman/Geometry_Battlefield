@@ -20,4 +20,9 @@ canvas{
   padding:10px;
   z-index: 999999;
   pointer-events: none;
+
+}
+
+.lifes{
+  pointer-events: none;
 }
