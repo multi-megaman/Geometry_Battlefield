@@ -7,12 +7,15 @@ import { normalTexture, angryTexture, superTexture } from '../loaders/load_ballu
 import { RigidBody } from '@dimforge/rapier3d';
 
 export class BallusController {
-    
+    lifes: number = 5;
+    lifesDisplay = document.getElementById('lifes');
+    timeOnStage: number = 0;
     model: THREE.Group
     orbitControls: OrbitControls;
     stageBody: CANNON.Body;
     world: CANNON.World;
     camera : THREE.Camera;
+    scene: THREE.Scene;
     jumping: boolean = false;
     canJump: boolean = true;
     jumpStartTime: number = 0;
@@ -44,16 +47,41 @@ export class BallusController {
     fastRoll = 0.5;
     slowRoll = 0.3;
 
-    constructor(model: THREE.Group,body:CANNON.Body, orbitControls: OrbitControls, camera:THREE.Camera, currentAction: string, stageBody: CANNON.Body, world: CANNON.World ){
+    constructor(model: THREE.Group,body:CANNON.Body, orbitControls: OrbitControls, camera:THREE.Camera, currentAction: string, stageBody: CANNON.Body, world: CANNON.World, scene: THREE.Scene ){
         this.model = model;
         this.body = body;
         this.stageBody = stageBody;
         this.world = world;
-
+        this.scene = scene;
+        this.lifesDisplay!.innerHTML = String(this.lifes);
         this.orbitControls = orbitControls;
         this.camera = camera;
         this.currentAction = currentAction;
         this.updateCameraTarget(0,0,0);
+
+        // // Carregue a textura do coração
+        // var heartTexture = new THREE.TextureLoader().load('../textures/lifes.png');
+
+        // // Crie o material do sprite
+        // var heartMaterial = new THREE.SpriteMaterial({
+        //     map: heartTexture,
+        //     color: 0xffffff, // Cor do coração
+        // });
+
+        // // Crie um sprite para cada coração
+        // var heartSprite1 = new THREE.Sprite(heartMaterial);
+        // var heartSprite2 = new THREE.Sprite(heartMaterial);
+        // var heartSprite3 = new THREE.Sprite(heartMaterial);
+
+        // // Posicione os sprites no canto superior esquerdo
+        // heartSprite1.position.set(-10, 10, 0);
+        // heartSprite2.position.set(10, 10, 0);
+        // heartSprite3.position.set(30, 10, 0);
+
+        // // Adicione os sprites à cena
+        // this.scene.add(heartSprite1);
+        // this.scene.add(heartSprite2);
+        // this.scene.add(heartSprite3);
     }
 
     public toggleRun() {
@@ -66,6 +94,42 @@ export class BallusController {
 
     public getRun(){
         return this.run;
+    }
+
+    public updateTimeOnStage(delta: number){
+        this.timeOnStage += delta;
+    }
+
+    public getTimeOnStage(){
+        return this.timeOnStage;
+    }
+
+    public resetPosition(){
+        this.model.position.x = 0;
+        this.model.position.y = 400;
+        this.model.position.z = 0;
+        this.body.position.x = 0;
+        this.body.position.y = 400;
+        this.body.position.z = 0;
+        this.body.force.set(0, 0, 0);
+        this.body.torque.set(0,0,0);
+        this.body.angularVelocity.set(0,0,0);
+        this.body.inertia.set(0,0,0);
+        this.body.applyImpulse(new CANNON.Vec3(0, 0, 0), new CANNON.Vec3(0, 0, 0))
+        this.body.velocity.set(0,0,0);
+    }
+
+    public resetTimeOnStage(){
+        this.timeOnStage = 0;
+    }
+
+    private CheckLoseLife(){
+        if (this.model.position.y < -100){
+            this.lifes -= 1;
+            this.lifesDisplay!.innerHTML = String(this.lifes);
+            this.resetTimeOnStage();
+            this.resetPosition();
+        }
     }
 
     public update (delta : number, keysPressed: any, keysReleased: any){
@@ -181,6 +245,8 @@ export class BallusController {
                 this.runVelocity = this.normalRunVelocity;
                 this.walkVelocity = this.normalWalkVelocity;
             }
+
+            this.CheckLoseLife();
     }
     
     private updateCameraTarget(moveX: number, moveZ: number, moveY: number) { //faz o update da câmera baseado no movimento do personagem

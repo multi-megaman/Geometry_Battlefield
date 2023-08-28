@@ -67,9 +67,6 @@ window.addEventListener('resize', onWindowResize);
 
 
 const [fase, materialFase, faseBody] = await load_stage(scene, world);
-console.log(fase)
-console.log(materialFase)
-console.log(faseBody)
 
 //função que gera aleatoriamente esferar na cena
 // let stars : GLTF[] = [];
@@ -91,18 +88,18 @@ console.log(faseBody)
 // boxBody.position.z = boxMesh.position.z
 // world.addBody(boxBody)
 
-let male_pelotitus : GLTF[] = [];
-male_pelotitus = generate_pelotitus(scene,6,'./models/pelotitus/male/pelotitus_male.gltf');
+// let male_pelotitus : GLTF[] = [];
+// male_pelotitus = generate_pelotitus(scene,6,'./models/pelotitus/male/pelotitus_male.gltf');
 
-let female_pelotitus : GLTF[] = [];
-female_pelotitus = generate_pelotitus(scene,6,'./models/pelotitus/female/pelotitus_female.gltf')
+// let female_pelotitus : GLTF[] = [];
+// female_pelotitus = generate_pelotitus(scene,6,'./models/pelotitus/female/pelotitus_female.gltf')
 
 //Gerando o personagem principal e seu controlador de movimento e animação 
 let ballus = await generate_ballus(scene, world);
 let ballusModel: THREE.Group = ballus[0];
 let ballusBody: CANNON.Body = ballus[1];
 let ballusMaterial: CANNON.Material = ballus[2];
-let playerController = new BallusController(ballusModel,ballusBody, camera.cameraControls,camera.camera,'Idle', faseBody, world);
+let playerController = new BallusController(ballusModel,ballusBody, camera.cameraControls,camera.camera,'Idle', faseBody, world, scene);
 
 //Gerando o King Kube
 let king_kube_model = await load_king_kube(scene);
@@ -172,16 +169,25 @@ composer.addPass( filmPass );
 const outputPass = new OutputPass();
 composer.addPass( outputPass );
 
+//Trocar de fase
+var FaseAtual = 0;
+const TempoDasFases = [10,20,30]
 
 
 const clock = new THREE.Clock();
 let updaterDelta
 //função que será responsável por renderizar cada atualização da cena
 function animate(){ 
-
+  // console.log("Tempo para passar da fase atual: " + TempoDasFases[FaseAtual] + " & o tempo atual é: " + playerController.getTimeOnStage())
   requestAnimationFrame(animate);
 
   updaterDelta = clock.getDelta();
+  playerController.updateTimeOnStage(updaterDelta);
+  if (playerController.getTimeOnStage() >= TempoDasFases[FaseAtual]){
+    playerController.resetTimeOnStage();
+    FaseAtual++;
+    playerController.resetPosition();
+  }
   // updaterDelta = Math.min(clock.getDelta(), 0.1)
   world.step(updaterDelta)
   if (playerController){
@@ -192,12 +198,6 @@ function animate(){
     enemy_spawner3.update(updaterDelta);
     enemy_spawner4.update(updaterDelta);
     enemy_spawner5.update(updaterDelta);
-    // if (playerController.getRun()){
-    //   model.traverse( (child) => { if (child.isMesh) child.material = angryTexture; })
-    // }
-    // else{
-    //   model.traverse( (child) => { if (child.isMesh) child.material = normalTexture; })
-    // }
   }
   // updatePhysics();
   // if (stars){

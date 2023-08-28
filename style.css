@@ -3,3 +3,21 @@ canvas{
   top:0;
   left:0;
 }
+
+.hud{
+  position:absolute;
+  display: flex;
+  flex-direction: row;
+  top:0;
+  left:0;
+  width:10vw;
+  height:10vh;
+  background:rgba(255, 0, 0, 0);
+  color:#ff0000;
+  font-family:Arial;
+  font-size:20px;
+  text-align:left;
+  padding:10px;
+  z-index: 999999;
+  pointer-events: none;
+}
