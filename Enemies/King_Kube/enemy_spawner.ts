@@ -15,7 +15,7 @@ export class EnemySpawner {
     boxShape: CANNON.Box = new CANNON.Box(new CANNON.Vec3(10,10,10));
 
     elapsedTime: number = 0;
-    spawnInterval: number = 2; // Intervalo de 5 segundos
+    spawnInterval: number = 1; // Intervalo de 5 segundos
     despawnInterval: number = this.spawnInterval*3; // Intervalo de 10 segundos
     impulseVector: CANNON.Vec3 = new CANNON.Vec3(0, 1, 0);
 
@@ -112,6 +112,14 @@ export class EnemySpawner {
       // // Atualize a posição e a rotação do cubo existente
       // this.boxMesh.position.set(this.boxBody.position.x, this.boxBody.position.y, this.boxBody.position.z);
       // this.boxMesh.quaternion.set(this.boxBody.quaternion.x, this.boxBody.quaternion.y, this.boxBody.quaternion.z, this.boxBody.quaternion.w);
+    }
+
+    public resetBoxes(){
+      this.boxes.forEach((box) => {
+        this.scene.remove(box.mesh)
+        this.world.removeBody(box.body)
+        this.boxes.splice(this.boxes.indexOf(box),1)
+      });
     }
 
 }

@@ -1,28 +1,54 @@
+:root{
+  overflow: hidden;
+}
+
 canvas{
   position:fixed;
   top:0;
   left:0;
 }
 
-.hud{
+.time{
+  pointer-events: none;
+  user-select: none;
+  position:absolute;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  top:0;
+  right:0;
+  width:25vw;
+  height:10vh;
+  background:rgba(255, 0, 0, 0);
+  color:#ff0000;
+  font-family:Arial;
+  font-size:10vh;
+  text-align:right;
+  padding:10px;
+  z-index: 999999;
+  pointer-events: none;
+  user-select: none;
+  overflow: hidden; 
+}
+
+.lifes{
+  pointer-events: none;
+  user-select: none;
   position:absolute;
   display: flex;
   flex-direction: row;
   top:0;
   left:0;
-  width:10vw;
+  width:25vw;
   height:10vh;
   background:rgba(255, 0, 0, 0);
   color:#ff0000;
   font-family:Arial;
-  font-size:20px;
+  font-size:10vh;
   text-align:left;
   padding:10px;
   z-index: 999999;
   pointer-events: none;
-
-}
-
-.lifes{
-  pointer-events: none;
+  user-select: none;
+  overflow: hidden; 
 }

@@ -7,7 +7,7 @@ import { normalTexture, angryTexture, superTexture } from '../loaders/load_ballu
 import { RigidBody } from '@dimforge/rapier3d';
 
 export class BallusController {
-    lifes: number = 5;
+    lifes: number = 0;
     lifesDisplay = document.getElementById('lifes');
     timeOnStage: number = 0;
     model: THREE.Group
@@ -125,7 +125,7 @@ export class BallusController {
 
     private CheckLoseLife(){
         if (this.model.position.y < -100){
-            this.lifes -= 1;
+            this.lifes += 1;
             this.lifesDisplay!.innerHTML = String(this.lifes);
             this.resetTimeOnStage();
             this.resetPosition();
