@@ -153,9 +153,9 @@ const composer = new EffectComposer( renderer );
 composer.addPass( new RenderPass( scene, camera.camera ) );
 
 const bloomPass = new BloomPass(
-  0.9,
-  10,
-  0.4,
+  0.5,
+  3,
+  0.3,
 );
 composer.addPass( bloomPass );
 
@@ -201,10 +201,10 @@ function animate(){
     playerController.update(updaterDelta,keysPressed, keysReleased)
     king_kube.update(updaterDelta, playerController.model);
     enemy_spawner.update(updaterDelta);
-    enemy_spawner2.update(updaterDelta);
-    enemy_spawner3.update(updaterDelta);
-    enemy_spawner4.update(updaterDelta);
-    enemy_spawner5.update(updaterDelta);
+    // enemy_spawner2.update(updaterDelta);
+    // enemy_spawner3.update(updaterDelta);
+    // enemy_spawner4.update(updaterDelta);
+    // enemy_spawner5.update(updaterDelta);
   }
   // updatePhysics();
   // if (stars){

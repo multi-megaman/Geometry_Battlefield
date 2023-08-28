@@ -21,6 +21,11 @@ export async function generate_ballus(scene, world){
     }
     } );
 
+    // //Criando uma esfera e aplicando a textura do ballus a ela
+    // const geometry = new THREE.SphereGeometry( 10, 32, 32 );
+    // const material = new THREE.MeshToonMaterial( {color: 0xffff00} );
+    // const model = new THREE.Mesh( geometry, material );
+
     //CANNON.JS
     const ballusMaterial = new CANNON.Material();
     const result = threeToCannon(model, {type: ShapeType.SPHERE});

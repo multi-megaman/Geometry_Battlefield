@@ -6,24 +6,35 @@ import * as CANNON from 'cannon-es';
 import { threeToCannon, ShapeType } from 'three-to-cannon';
 
 //adicionando luzes
-// generate_PointLight(scene,0xffffff,new THREE.Vector3(-100,200,800),1,true);
-// generate_PointLight(scene,0xffffff,new THREE.Vector3(100,200,800),1,true);
 // generate_AmbientLight(scene,0xffffff,new THREE.Vector3(0,100,800),1);
 export async function load_stage(scene, world){
   
   //Three.JS
-  generate_AmbientLight(scene,0xffffff,new THREE.Vector3(0,100,800),1);
-  const modelLoader =new GLTFLoader();
-  var model;
-  model = await modelLoader.loadAsync('models/Stage1/stage1.gltf'); //Stage 1
-  model = model.scene;
-  model.position.setY(0);
-  model.traverse(function (object: any) {
-      if (object.isMesh) {
-        // object.castShadow = true;
-        object.receiveShadow = true;
-      }
-  });
+  generate_PointLight(scene,0xffffff,new THREE.Vector3(-100,200,200),2,true);
+  generate_PointLight(scene,0xffffff,new THREE.Vector3(100,200,200),2,true);
+  generate_PointLight(scene,0xffffff,new THREE.Vector3(-100,200,-200),2,true);
+  generate_PointLight(scene,0xffffff,new THREE.Vector3(100,200,-200),2,true);
+  // // generate_AmbientLight(scene,0xffffff,new THREE.Vector3(0,100,800),1);
+  // const modelLoader =new GLTFLoader();
+  // var model;
+  // model = await modelLoader.loadAsync('models/Stage1/stage1.gltf'); //Stage 1
+  // model = model.scene;
+  // model.position.setY(0);
+  // model.traverse(function (object: any) {
+  //     if (object.isMesh) {
+  //       // object.castShadow = true;
+  //       object.receiveShadow = true;
+  //     }
+  // });
+
+  //gerando o modelo do palco a partir de uma box no three.js
+  const stageGeometry = new THREE.BoxGeometry(100, 1, 100);
+  const loader = new THREE.TextureLoader();
+  const stageModelMaterial = new THREE.MeshToonMaterial( { map: loader.load("../textures/kubiku/front2.png") } );
+  // const stageModelMaterial = new THREE.MeshToonMaterial({color: 0xffff00});
+  const model = new THREE.Mesh(stageGeometry, stageModelMaterial);
+  model.castShadow = true;
+  model.receiveShadow = true;
   
   //CANNON.JS
   const stageMaterial = new CANNON.Material();

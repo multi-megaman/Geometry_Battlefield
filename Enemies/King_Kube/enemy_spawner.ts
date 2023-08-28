@@ -25,12 +25,12 @@ export class EnemySpawner {
     // ]); //carrega as 6 faces do cubo
     loader = new THREE.TextureLoader();
     normalMaterial = [
-      new THREE.MeshBasicMaterial( { map: this.loader.load("../../textures/kubiku/right.png") } ),
-      new THREE.MeshBasicMaterial( { map: this.loader.load("../../textures/kubiku/left.png") } ),
-      new THREE.MeshBasicMaterial( { map: this.loader.load("../../textures/kubiku/top.png") } ),
-      new THREE.MeshBasicMaterial( { map: this.loader.load("../../textures/kubiku/bottom.png") } ),
-      new THREE.MeshBasicMaterial( { map: this.loader.load("../../textures/kubiku/front.png") } ),
-      new THREE.MeshBasicMaterial( { map: this.loader.load("../../textures/kubiku/back.png") } ),
+      new THREE.MeshToonMaterial( { map: this.loader.load("../../textures/kubiku/right.png") } ),
+      new THREE.MeshToonMaterial( { map: this.loader.load("../../textures/kubiku/left.png") } ),
+      new THREE.MeshToonMaterial( { map: this.loader.load("../../textures/kubiku/top.png") } ),
+      new THREE.MeshToonMaterial( { map: this.loader.load("../../textures/kubiku/bottom.png") } ),
+      new THREE.MeshToonMaterial( { map: this.loader.load("../../textures/kubiku/front.png") } ),
+      new THREE.MeshToonMaterial( { map: this.loader.load("../../textures/kubiku/back.png") } ),
     ];
     // normalMaterial = new THREE.MeshToonMaterial({color:0xffffff ,map: this.boxTexture});
     boxMesh: THREE.Mesh;
@@ -78,13 +78,15 @@ export class EnemySpawner {
       newBoxMesh.position.y = this.position.y + (Math.random() * 100 - 50);
       newBoxMesh.position.z = this.position.z + (Math.random() * 100 - 50);
 
+      
       // newBoxMesh.position.x = -30;
       // newBoxMesh.position.y = 100;
       newBoxMesh.castShadow = true;
-
+      newBoxMesh.receiveShadow = true;
+      
       // Adicione o novo cubo à cena
       this.scene.add(newBoxMesh);
-
+      
       // Crie um novo corpo de física para o novo cubo
       const newBoxBody = new CANNON.Body({ mass: randomMass });
       const newBoxShape = new CANNON.Box(new CANNON.Vec3(randomSize / 2, randomSize / 2, randomSize / 2));
