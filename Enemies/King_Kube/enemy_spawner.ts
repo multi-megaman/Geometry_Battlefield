@@ -7,27 +7,30 @@ export class EnemySpawner {
     scene: THREE.Scene;
     world: CANNON.World;
 
-    boxGeometry = new THREE.BoxGeometry(20,20,20)
-    normalMaterial = new THREE.MeshToonMaterial()
-    boxMesh = new THREE.Mesh(this.boxGeometry, this.normalMaterial)
+    boxGeometry: THREE.BoxGeometry;
+    normalMaterial = new THREE.MeshToonMaterial();
+    boxMesh: THREE.Mesh;
 
     boxBody: CANNON.Body = new CANNON.Body({ mass: 1 });
-    boxShape: CANNON.Box = new CANNON.Box(new CANNON.Vec3(10,10,10))
+    boxShape: CANNON.Box = new CANNON.Box(new CANNON.Vec3(10,10,10));
 
     elapsedTime: number = 0;
     spawnInterval: number = 5; // Intervalo de 5 segundos
     despawnInterval: number = 10; // Intervalo de 10 segundos
+    impulseVector: CANNON.Vec3 = new CANNON.Vec3(0, 1, 0);
 
     boxes: Array<any> = [];
 
-    constructor (position: THREE.Vector3, scene: THREE.Scene, world: CANNON.World){
+    constructor (position: THREE.Vector3, scene: THREE.Scene, world: CANNON.World, impulseVector, boxGeometry: THREE.BoxGeometry){
         this.position = position;
         this.scene = scene;
         this.world = world;
-        // this.boxMesh.position.x = -30
-        // this.boxMesh.position.y = 100
-        // this.boxMesh.castShadow = true
-        // this.scene.add(this.boxMesh)
+        this.impulseVector = impulseVector;
+        this.boxGeometry = boxGeometry;
+        this.boxMesh = new THREE.Mesh(this.boxGeometry, this.normalMaterial)
+        this.boxMesh.position.copy(position)
+        this.boxMesh.castShadow = true
+        this.scene.add(this.boxMesh)
         // this.boxBody.linearDamping = 0.25
         // this.boxBody.addShape(this.boxShape)
         // this.boxBody.position.x = this.boxMesh.position.x
@@ -40,14 +43,20 @@ export class EnemySpawner {
     createBox(){
       // Crie um cubo diferente
       const randomSize = Math.random() * 10 + 10; // Tamanho aleatório entre 10 e 20
-      const randomMass = Math.random() * 2 + 1; // Massa aleatória entre 1 e 3
+      const randomMass = Math.random() * 4 + 1; // Massa aleatória 
       const randomImpulse = Math.random() * 500 + 1000; // Impulso aleatório entre 500 e 1000
       const newBoxGeometry = new THREE.BoxGeometry(randomSize, randomSize, randomSize);
       const newBoxMesh = new THREE.Mesh(newBoxGeometry, this.normalMaterial);
 
-      // Defina a posição inicial do novo cubo (ajuste isso conforme necessário)
-      newBoxMesh.position.x = -30;
-      newBoxMesh.position.y = 100;
+      // Define a posição do novo cubo para estar dentro dos limites do tamanho do cubo existente
+
+      // newBoxMesh.position.copy(this.position);
+      newBoxMesh.position.x = this.position.x + (Math.random() * 100 - 50);
+      newBoxMesh.position.y = this.position.y + (Math.random() * 100 - 50);
+      newBoxMesh.position.z = this.position.z + (Math.random() * 100 - 50);
+
+      // newBoxMesh.position.x = -30;
+      // newBoxMesh.position.y = 100;
       newBoxMesh.castShadow = true;
 
       // Adicione o novo cubo à cena
@@ -65,9 +74,9 @@ export class EnemySpawner {
       this.world.addBody(newBoxBody);
       this.boxes.push({ mesh: newBoxMesh, body: newBoxBody, despawnTime: 0 })
 
-      console.log("caixa criada")
+      // console.log("caixa criada")
       //aplicando um impulso ao cubo criado
-      newBoxBody.applyImpulse(new CANNON.Vec3(0, -500, 0), new CANNON.Vec3(0, 0, 0))
+      newBoxBody.applyImpulse(new CANNON.Vec3(-(randomImpulse)*this.impulseVector.x, -(randomImpulse)*this.impulseVector.y, -(randomImpulse)*this.impulseVector.z), new CANNON.Vec3(0, 0, 0))
     }
 
     updateBoxes(deltaTime){
@@ -81,7 +90,7 @@ export class EnemySpawner {
             this.scene.remove(box.mesh)
             this.world.removeBody(box.body)
             this.boxes.splice(this.boxes.indexOf(box),1)
-            console.log("caixa removida")
+            // console.log("caixa removida")
           }
         });
       }
