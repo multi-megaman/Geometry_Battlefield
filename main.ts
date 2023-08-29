@@ -37,7 +37,7 @@ var timeStep=1/60; // segundos
 let world = new CANNON.World();
 world.gravity.set(0,-200,0);
 world.broadphase = new CANNON.NaiveBroadphase();
-world.solver.iterations = 10;
+// world.solver.iterations = 10;
 
 //Iniciando o ThreeJS
 
@@ -66,7 +66,7 @@ function onWindowResize() {
 window.addEventListener('resize', onWindowResize);
 
 
-const [fase, materialFase, faseBody] = await load_stage(scene, world);
+const [fase, materialFase, faseBody]: any = await load_stage(scene, world);
 
 //função que gera aleatoriamente esferar na cena
 // let stars : GLTF[] = [];
@@ -95,7 +95,7 @@ const [fase, materialFase, faseBody] = await load_stage(scene, world);
 // female_pelotitus = generate_pelotitus(scene,6,'./models/pelotitus/female/pelotitus_female.gltf')
 
 //Gerando o personagem principal e seu controlador de movimento e animação 
-let ballus = await generate_ballus(scene, world);
+let ballus: any = await generate_ballus(scene, world);
 let ballusModel: THREE.Group = ballus[0];
 let ballusBody: CANNON.Body = ballus[1];
 let ballusMaterial: CANNON.Material = ballus[2];
@@ -109,10 +109,12 @@ king_kube.model.position.setZ(-350);
 
 //Gerando o Spawner dos inimigos
 let enemy_spawner = new EnemySpawner(new THREE.Vector3(0,250,0), scene, world, new CANNON.Vec3(0, 1, 0),new THREE.BoxGeometry(150,0,150));
+enemy_spawner.CanUpdate(true);
 let enemy_spawner2 =new EnemySpawner(new THREE.Vector3(200,50,0), scene, world, new CANNON.Vec3(1, 0, 0), new THREE.BoxGeometry(0,150,150));
 let enemy_spawner3 =new EnemySpawner(new THREE.Vector3(-200,50,0), scene, world, new CANNON.Vec3(-1, 0, 0), new THREE.BoxGeometry(0,150,150));
 let enemy_spawner4 =new EnemySpawner(new THREE.Vector3(1,50,200), scene, world, new CANNON.Vec3(0, 0, 1), new THREE.BoxGeometry(150,150,0));
 let enemy_spawner5 =new EnemySpawner(new THREE.Vector3(1,50,-200), scene, world, new CANNON.Vec3(0, 0, -1), new THREE.BoxGeometry(150,150,0));
+var enemy_spawner_array = [enemy_spawner, enemy_spawner2, enemy_spawner3, enemy_spawner4, enemy_spawner5];
 
 scene.background = spaceBackground;
 scene.environment = spaceBackground;
@@ -172,7 +174,7 @@ composer.addPass( outputPass );
 
 //Trocar de fase
 var FaseAtual = 0;
-const TempoDasFases = [10,20,30]
+const TempoDasFases = [10,15,20,25,30]
 
 //Display de mortes
 const timeDisplay = document.getElementById('time');
@@ -192,7 +194,22 @@ function animate(){
   if (playerController.getTimeOnStage() >= TempoDasFases[FaseAtual]){
     playerController.resetTimeOnStage();
     FaseAtual++;
-    stageDisplay!.innerHTML = "Stage " + (FaseAtual+1).toString();
+    
+    //Se FaseAtual ultrapassar o tamanho do array, significa que o jogador venceu o jogo e deve ser redirecionado para o html de vitória
+    if (FaseAtual >= TempoDasFases.length){
+      window.location.href = "victory.html";
+    }
+
+    enemy_spawner_array[FaseAtual].CanUpdate(true);
+
+    //Caso seja a fase final (a ultima fase do array) deve printar a mensagem (Stage numero_stage final)
+    if (FaseAtual == TempoDasFases.length-1){
+      stageDisplay!.innerHTML = "Stage " + (FaseAtual+1).toString() + " final";
+    }
+    else{
+      stageDisplay!.innerHTML = "Stage " + (FaseAtual+1).toString();
+    }
+
     playerController.resetPosition();
   }
   // updaterDelta = Math.min(clock.getDelta(), 0.1)
@@ -201,10 +218,10 @@ function animate(){
     playerController.update(updaterDelta,keysPressed, keysReleased)
     king_kube.update(updaterDelta, playerController.model);
     enemy_spawner.update(updaterDelta);
-    // enemy_spawner2.update(updaterDelta);
-    // enemy_spawner3.update(updaterDelta);
-    // enemy_spawner4.update(updaterDelta);
-    // enemy_spawner5.update(updaterDelta);
+    enemy_spawner2.update(updaterDelta);
+    enemy_spawner3.update(updaterDelta);
+    enemy_spawner4.update(updaterDelta);
+    enemy_spawner5.update(updaterDelta);
   }
   // updatePhysics();
   // if (stars){

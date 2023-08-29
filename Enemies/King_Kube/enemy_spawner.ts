@@ -7,7 +7,7 @@ export class EnemySpawner {
     scene: THREE.Scene;
     world: CANNON.World;
 
-    
+    can_update: boolean = false;
 
     portalGeometry: THREE.BoxGeometry;
     portalTexture = new THREE.TextureLoader().load('../../textures/blackhole.png');
@@ -122,28 +122,31 @@ export class EnemySpawner {
     }
 
     update(deltaTime: number) {
-      // Atualize o contador de tempo
-      this.elapsedTime += deltaTime;
-  
-      // Verifique se o tempo passou do intervalo de spawn
-      if (this.elapsedTime >= this.spawnInterval) {
-        // Redefina o contador de tempo
-        this.elapsedTime = 0;
-        this.createBox();
-      }
+      if (this.can_update){
 
-      this.updateBoxes(deltaTime);
-
-      //Efeito de rotacionar o portal, dependendo do impulseVector
-      this.portalMesh.rotateOnAxis(new THREE.Vector3(this.impulseVector.x,this.impulseVector.y,this.impulseVector.z), 0.05);
-
-      
-      
-      // // Atualize a posição e a rotação do cubo existente
+        // Atualize o contador de tempo
+        this.elapsedTime += deltaTime;
+        
+        // Verifique se o tempo passou do intervalo de spawn
+        if (this.elapsedTime >= this.spawnInterval) {
+          // Redefina o contador de tempo
+          this.elapsedTime = 0;
+          this.createBox();
+        }
+        
+        this.updateBoxes(deltaTime);
+        
+        //Efeito de rotacionar o portal, dependendo do impulseVector
+        this.portalMesh.rotateOnAxis(new THREE.Vector3(this.impulseVector.x,this.impulseVector.y,this.impulseVector.z), 0.05);
+        
+        
+        
+        // // Atualize a posição e a rotação do cubo existente
       // this.boxMesh.position.set(this.boxBody.position.x, this.boxBody.position.y, this.boxBody.position.z);
       // this.boxMesh.quaternion.set(this.boxBody.quaternion.x, this.boxBody.quaternion.y, this.boxBody.quaternion.z, this.boxBody.quaternion.w);
     }
-
+  }
+    
     public resetBoxes(){
       this.boxes.forEach((box) => {
         this.scene.remove(box.mesh)
@@ -151,5 +154,8 @@ export class EnemySpawner {
         this.boxes.splice(this.boxes.indexOf(box),1)
       });
     }
-
-}
+    
+    public CanUpdate(bool: boolean){
+      this.can_update = bool;
+    }
+  }
