@@ -10,6 +10,7 @@ export async function generate_ballus(scene, world){
     model = await modelLoader.loadAsync('./models/ballus/ballus.gltf');
     // model = await modelLoader.loadAsync('./models/pelotitus/male/pelotitus_male.gltf')
     model = model.scene;
+    model.scale.set(0,0,0);
     model.position.set(0,400,0);
     // model.scale.set(10,10,10);
     model.traverse( (child) => {

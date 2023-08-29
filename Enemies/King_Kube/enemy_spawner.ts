@@ -38,7 +38,7 @@ export class EnemySpawner {
     boxBody: CANNON.Body = new CANNON.Body({ mass: 1 });
     boxShape: CANNON.Box = new CANNON.Box(new CANNON.Vec3(10,10,10));
     elapsedTime: number = 0;
-    spawnInterval: number = 1; // Intervalo de 5 segundos
+    spawnInterval: number = 0.75; // Intervalo de 5 segundos
     despawnInterval: number = this.spawnInterval*3; // Intervalo de 10 segundos
     impulseVector: CANNON.Vec3 = new CANNON.Vec3(0, 1, 0);
 
@@ -65,9 +65,9 @@ export class EnemySpawner {
 
     createBox(){
       // Crie um cubo diferente
-      const randomSize = Math.random() * 15 + 10; // Tamanho aleatório entre 15 e 25
-      const randomMass = Math.random() * 4 + 1; // Massa aleatória 
-      const randomImpulse = Math.random() * 500 + 1000; // Impulso aleatório entre 500 e 1000
+      const randomSize = Math.random() * 25 + 10; // Tamanho aleatório entre 15 e 25
+      const randomMass = Math.random() * 6 + 2; // Massa aleatória 
+      const randomImpulse = Math.random() * 1500 + 1900; // Impulso aleatório entre 700 e 1200
       const newBoxGeometry = new THREE.BoxGeometry(randomSize, randomSize, randomSize);
       const newBoxMesh = new THREE.Mesh(newBoxGeometry, this.normalMaterial);
 

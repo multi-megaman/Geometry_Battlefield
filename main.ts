@@ -20,7 +20,8 @@ import { load_stage } from './loaders/stage_loader';
 
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { BloomPass } from 'three/examples/jsm/postprocessing/BloomPass.js';
+// import { BloomPass } from 'three/examples/jsm/postprocessing/BloomPass.js';
+import {UnrealBloomPass as BloomPass} from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 
@@ -108,12 +109,12 @@ king_kube.model.position.setY(100);
 king_kube.model.position.setZ(-350);
 
 //Gerando o Spawner dos inimigos
-let enemy_spawner = new EnemySpawner(new THREE.Vector3(0,250,0), scene, world, new CANNON.Vec3(0, 1, 0),new THREE.BoxGeometry(150,0,150));
+let enemy_spawner = new EnemySpawner(new THREE.Vector3(1,50,-200), scene, world, new CANNON.Vec3(0, 0, -1), new THREE.BoxGeometry(150,150,0)); 
 enemy_spawner.CanUpdate(true);
 let enemy_spawner2 =new EnemySpawner(new THREE.Vector3(200,50,0), scene, world, new CANNON.Vec3(1, 0, 0), new THREE.BoxGeometry(0,150,150));
 let enemy_spawner3 =new EnemySpawner(new THREE.Vector3(-200,50,0), scene, world, new CANNON.Vec3(-1, 0, 0), new THREE.BoxGeometry(0,150,150));
-let enemy_spawner4 =new EnemySpawner(new THREE.Vector3(1,50,200), scene, world, new CANNON.Vec3(0, 0, 1), new THREE.BoxGeometry(150,150,0));
-let enemy_spawner5 =new EnemySpawner(new THREE.Vector3(1,50,-200), scene, world, new CANNON.Vec3(0, 0, -1), new THREE.BoxGeometry(150,150,0));
+let enemy_spawner4 =new EnemySpawner(new THREE.Vector3(0,250,0), scene, world, new CANNON.Vec3(0, 1, 0),new THREE.BoxGeometry(150,0,150));
+let enemy_spawner5 =new EnemySpawner(new THREE.Vector3(1,50,200), scene, world, new CANNON.Vec3(0, 0, 1), new THREE.BoxGeometry(150,150,0));
 var enemy_spawner_array = [enemy_spawner, enemy_spawner2, enemy_spawner3, enemy_spawner4, enemy_spawner5];
 
 scene.background = spaceBackground;
@@ -155,9 +156,10 @@ const composer = new EffectComposer( renderer );
 composer.addPass( new RenderPass( scene, camera.camera ) );
 
 const bloomPass = new BloomPass(
-  0.5,
-  3,
-  0.3,
+  new THREE.Vector2(window.innerWidth, window.innerHeight), // resolution
+  0.2,   // strength
+  0,    // radius
+  0.5  // threshold
 );
 composer.addPass( bloomPass );
 
