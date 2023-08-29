@@ -10,11 +10,12 @@ import { threeToCannon, ShapeType } from 'three-to-cannon';
 export async function load_stage(scene, world){
   
   //Three.JS
-  generate_PointLight(scene,0xffffff,new THREE.Vector3(-100,200,200),2,true);
-  generate_PointLight(scene,0xffffff,new THREE.Vector3(100,200,200),2,true);
-  generate_PointLight(scene,0xffffff,new THREE.Vector3(-100,200,-200),2,true);
-  generate_PointLight(scene,0xffffff,new THREE.Vector3(100,200,-200),2,true);
-  // // generate_AmbientLight(scene,0xffffff,new THREE.Vector3(0,100,800),1);
+  generate_PointLight(scene,0xffffff,new THREE.Vector3(-100,200,200),0.5,true);
+  generate_PointLight(scene,0xffffff,new THREE.Vector3(100,200,200),0.5,true);
+  generate_PointLight(scene,0xffffff,new THREE.Vector3(-100,200,-200),0.5,true);
+  generate_PointLight(scene,0xffffff,new THREE.Vector3(100,200,-200),0.5
+  ,true);
+  // generate_AmbientLight(scene,0xffffff,new THREE.Vector3(0,100,800),1);
   // const modelLoader =new GLTFLoader();
   // var model;
   // model = await modelLoader.loadAsync('models/Stage1/stage1.gltf'); //Stage 1
